@@ -17,6 +17,7 @@ import {
 import { BarChart3, MousePointerClick, Link as LinkIcon } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import { LogoutButton } from "@/components/logout-button";
 
 export const dynamic = "force-dynamic";
 
@@ -43,9 +44,12 @@ export default async function StatsPage() {
               Suivez les performances de vos liens
             </p>
           </div>
-          <Button asChild>
-            <Link href="/">Créer un lien</Link>
-          </Button>
+          <div className="flex items-center gap-2">
+            <Button asChild>
+              <Link href="/">Créer un lien</Link>
+            </Button>
+            <LogoutButton />
+          </div>
         </div>
 
         <div className="grid gap-4 md:grid-cols-2 mb-8">
