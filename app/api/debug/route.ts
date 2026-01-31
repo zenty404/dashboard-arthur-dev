@@ -1,9 +1,17 @@
 import { NextResponse } from "next/server";
+import { prisma } from "@/lib/prisma";
 
 export async function GET() {
-  return NextResponse.json({
-    hasUrl: !!process.env.TURSO_DATABASE_URL,
-    hasToken: !!process.env.TURSO_AUTH_TOKEN,
-    urlStart: process.env.TURSO_DATABASE_URL?.substring(0, 20) + "...",
-  });
+  try {
+    const count = await prisma.link.count();
+    return NextResponse.json({
+      status: "ok",
+      linkCount: count,
+    });
+  } catch (error) {
+    return NextResponse.json({
+      status: "error",
+      error: error instanceof Error ? error.message : String(error),
+    }, { status: 500 });
+  }
 }
