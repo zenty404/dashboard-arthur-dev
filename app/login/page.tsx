@@ -3,6 +3,8 @@ import { isAuthenticated } from "@/lib/auth";
 import { hasAdmin } from "@/app/actions/auth";
 import { LoginForm } from "@/components/login-form";
 
+export const dynamic = "force-dynamic";
+
 export default async function LoginPage() {
   const adminExists = await hasAdmin();
   if (!adminExists) {

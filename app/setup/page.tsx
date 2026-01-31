@@ -2,6 +2,8 @@ import { redirect } from "next/navigation";
 import { hasAdmin } from "@/app/actions/auth";
 import { SetupForm } from "@/components/setup-form";
 
+export const dynamic = "force-dynamic";
+
 export default async function SetupPage() {
   const adminExists = await hasAdmin();
   if (adminExists) {
