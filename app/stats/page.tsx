@@ -46,7 +46,7 @@ export default async function StatsPage() {
               Statistiques
             </h1>
             <p className="text-muted-foreground mt-1">
-              Suivez les performances de vos liens
+              Gestion des liens raccourcis
             </p>
           </div>
           <div className="flex items-center gap-2">
@@ -86,7 +86,7 @@ export default async function StatsPage() {
           <CardHeader>
             <CardTitle>Tous les liens</CardTitle>
             <CardDescription>
-              Liste de tous vos liens raccourcis avec leurs statistiques
+              Tous les liens créés
             </CardDescription>
           </CardHeader>
           <CardContent>

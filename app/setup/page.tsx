@@ -16,10 +16,10 @@ export default async function SetupPage() {
       <div className="mb-8 text-center">
         <Logo size="lg" className="mb-4" />
         <h1 className="text-2xl font-semibold tracking-tight mb-2 text-foreground">
-          Bienvenue
+          Configuration
         </h1>
         <p className="text-muted-foreground">
-          Configurez votre raccourcisseur d&apos;URL
+          Première connexion
         </p>
       </div>
       <SetupForm />

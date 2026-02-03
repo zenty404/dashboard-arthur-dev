@@ -52,10 +52,10 @@ export function UrlShortenerForm() {
       <CardHeader className="text-center">
         <CardTitle className="flex items-center justify-center gap-2 text-2xl">
           <Link className="h-6 w-6" />
-          URL Shortener
+          Nouveau lien
         </CardTitle>
         <CardDescription>
-          Collez votre URL longue et obtenez un lien court
+          Entrez l&apos;URL à raccourcir
         </CardDescription>
       </CardHeader>
       <CardContent>

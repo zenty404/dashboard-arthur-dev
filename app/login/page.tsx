@@ -22,7 +22,7 @@ export default async function LoginPage() {
       <div className="mb-8 text-center">
         <Logo size="lg" className="mb-4" />
         <p className="text-muted-foreground">
-          Accès réservé aux administrateurs
+          Outil interne
         </p>
       </div>
       <LoginForm />
