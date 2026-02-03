@@ -14,7 +14,7 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "Arthur.dev - Raccourcisseur d'URL",
-  description: "Raccourcisseur d'URL simple, rapide et efficace par Arthur.dev",
+  description: "Raccourcisseur d'URL interne",
 };
 
 export default function RootLayout({

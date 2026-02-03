@@ -21,7 +21,7 @@ export default function NotFound() {
           </div>
           <CardTitle className="text-2xl">Lien introuvable</CardTitle>
           <CardDescription>
-            Ce lien raccourci n&apos;existe pas ou a été supprimé.
+            Ce lien n&apos;existe pas ou a été supprimé.
           </CardDescription>
         </CardHeader>
         <CardContent>

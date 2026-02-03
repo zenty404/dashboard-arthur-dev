@@ -46,7 +46,7 @@ export function LoginForm() {
           Connexion
         </CardTitle>
         <CardDescription>
-          Connectez-vous pour accéder au raccourcisseur
+          Accès à l&apos;outil interne
         </CardDescription>
       </CardHeader>
       <CardContent>

@@ -21,7 +21,7 @@ export default function LinkDisabled() {
           </div>
           <CardTitle className="text-2xl">Lien désactivé</CardTitle>
           <CardDescription>
-            Ce lien raccourci a été désactivé par son propriétaire.
+            Ce lien a été désactivé.
           </CardDescription>
         </CardHeader>
         <CardContent>

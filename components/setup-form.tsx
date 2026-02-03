@@ -52,7 +52,7 @@ export function SetupForm() {
           Configuration initiale
         </CardTitle>
         <CardDescription>
-          Créez votre compte administrateur
+          Créez le compte administrateur
         </CardDescription>
       </CardHeader>
       <CardContent>
