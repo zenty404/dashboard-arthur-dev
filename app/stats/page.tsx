@@ -14,11 +14,12 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { BarChart3, MousePointerClick, Link as LinkIcon } from "lucide-react";
+import { BarChart3, MousePointerClick, Link as LinkIcon, CheckCircle, XCircle } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { LogoutButton } from "@/components/logout-button";
 import { Logo } from "@/components/logo";
+import { LinkActions } from "@/components/link-actions";
 
 export const dynamic = "force-dynamic";
 
@@ -100,7 +101,9 @@ export default async function StatsPage() {
                     <TableHead>Code court</TableHead>
                     <TableHead className="hidden md:table-cell">URL originale</TableHead>
                     <TableHead className="text-center">Clics</TableHead>
+                    <TableHead className="hidden sm:table-cell">Statut</TableHead>
                     <TableHead className="hidden sm:table-cell">Date de création</TableHead>
+                    <TableHead className="text-right">Actions</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -132,12 +135,28 @@ export default async function StatsPage() {
                           {link.clicks}
                         </span>
                       </TableCell>
+                      <TableCell className="hidden sm:table-cell">
+                        {link.isActive ? (
+                          <span className="inline-flex items-center gap-1 text-green-600">
+                            <CheckCircle className="h-3 w-3" />
+                            Actif
+                          </span>
+                        ) : (
+                          <span className="inline-flex items-center gap-1 text-muted-foreground">
+                            <XCircle className="h-3 w-3" />
+                            Inactif
+                          </span>
+                        )}
+                      </TableCell>
                       <TableCell className="hidden sm:table-cell text-muted-foreground">
                         {new Date(link.createdAt).toLocaleDateString("fr-FR", {
                           day: "numeric",
                           month: "short",
                           year: "numeric",
                         })}
+                      </TableCell>
+                      <TableCell className="text-right">
+                        <LinkActions linkId={link.id} isActive={link.isActive} />
                       </TableCell>
                     </TableRow>
                   ))}

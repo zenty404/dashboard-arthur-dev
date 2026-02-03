@@ -15,10 +15,19 @@ export async function GET(
     return NextResponse.redirect(new URL("/not-found", request.url));
   }
 
-  await prisma.link.update({
-    where: { shortCode },
-    data: { clicks: { increment: 1 } },
-  });
+  if (!link.isActive) {
+    return NextResponse.redirect(new URL("/link-disabled", request.url));
+  }
+
+  await prisma.$transaction([
+    prisma.link.update({
+      where: { shortCode },
+      data: { clicks: { increment: 1 } },
+    }),
+    prisma.clickEvent.create({
+      data: { linkId: link.id },
+    }),
+  ]);
 
   return NextResponse.redirect(link.originalUrl);
 }

@@ -2,9 +2,14 @@
 
 import { prisma } from "@/lib/prisma";
 import { nanoid } from "nanoid";
+import { revalidatePath } from "next/cache";
 
 export type CreateLinkResult =
   | { success: true; shortCode: string }
+  | { success: false; error: string };
+
+export type ActionResult =
+  | { success: true }
   | { success: false; error: string };
 
 function isValidUrl(url: string): boolean {
@@ -39,9 +44,54 @@ export async function createShortLink(
       },
     });
 
+    revalidatePath("/stats");
     return { success: true, shortCode };
   } catch (error) {
     console.error("Erreur lors de la création du lien:", error);
     return { success: false, error: "Erreur lors de la création du lien" };
   }
+}
+
+export async function deleteLink(id: string): Promise<ActionResult> {
+  try {
+    await prisma.link.delete({
+      where: { id },
+    });
+    revalidatePath("/stats");
+    return { success: true };
+  } catch (error) {
+    console.error("Erreur lors de la suppression du lien:", error);
+    return { success: false, error: "Erreur lors de la suppression du lien" };
+  }
+}
+
+export async function toggleLinkActive(id: string): Promise<ActionResult> {
+  try {
+    const link = await prisma.link.findUnique({
+      where: { id },
+      select: { isActive: true },
+    });
+
+    if (!link) {
+      return { success: false, error: "Lien non trouvé" };
+    }
+
+    await prisma.link.update({
+      where: { id },
+      data: { isActive: !link.isActive },
+    });
+
+    revalidatePath("/stats");
+    return { success: true };
+  } catch (error) {
+    console.error("Erreur lors de la modification du lien:", error);
+    return { success: false, error: "Erreur lors de la modification du lien" };
+  }
+}
+
+export async function getClickEvents(linkId: string) {
+  return prisma.clickEvent.findMany({
+    where: { linkId },
+    orderBy: { clickedAt: "desc" },
+  });
 }
