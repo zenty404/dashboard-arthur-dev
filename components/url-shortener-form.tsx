@@ -55,7 +55,7 @@ export function UrlShortenerForm() {
           Nouveau lien
         </CardTitle>
         <CardDescription>
-          Entrez l&apos;URL à raccourcir
+          Entrez l&apos;URL à suivre
         </CardDescription>
       </CardHeader>
       <CardContent>

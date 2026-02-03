@@ -14,7 +14,7 @@ export default function Home() {
       <div className="mb-8 text-center">
         <Logo size="lg" className="mb-4" />
         <h1 className="text-2xl font-semibold tracking-tight text-foreground">
-          Raccourcisseur d&apos;URL interne
+          Suivi de liens
         </h1>
       </div>
       <UrlShortenerForm />
