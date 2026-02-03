@@ -7,17 +7,18 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ```bash
 npm run dev      # Start development server (http://localhost:3000)
 npm run build    # Build for production (includes prisma generate)
-npm run start    # Start production server
 npm run lint     # Run ESLint
 
-# Prisma commands
+# Prisma commands (local development)
 npx prisma generate                   # Regenerate Prisma client
-npx prisma db push                    # Push schema changes to database
+npx prisma db push                    # Push schema changes to local SQLite
 
 # Turso CLI (production database)
 turso db shell saas-shortener         # Open SQL shell
 turso db shell saas-shortener "SQL"   # Execute SQL query
 ```
+
+**Important**: Schema changes require updating both local (prisma db push) and production (Turso SQL) databases separately.
 
 ## Architecture
 
@@ -35,25 +36,27 @@ URL shortener SaaS with authentication, built with Next.js 16 (App Router), Pris
 - `lib/prisma.ts` - Singleton Prisma client with Turso/libSQL adapter
 - `lib/generated/prisma/` - Generated Prisma client (import from `@/lib/generated/prisma/client`)
 - `lib/auth.ts` - Authentication utilities (JWT, cookies, password hashing)
-- `app/actions/links.ts` - Server Action for creating shortened links (uses nanoid for 8-char codes)
+- `app/actions/links.ts` - Server Actions for link management (create, delete, toggle, getClickEvents)
 - `app/actions/auth.ts` - Server Actions for login/logout/setup
-- `app/[shortCode]/route.ts` - Dynamic route handler for redirects (increments clicks)
+- `app/[shortCode]/route.ts` - Dynamic route handler for redirects (checks isActive, creates ClickEvent, increments clicks)
 - `middleware.ts` - Auth middleware checking `auth-token` cookie; protects all routes except /login, /setup, /api, and short codes
 
 ### Database Models
 
-**Link**: `id`, `originalUrl`, `shortCode` (unique, 8 chars), `clicks`, `createdAt`
+**Link**: `id`, `originalUrl`, `shortCode` (unique, 8 chars), `clicks`, `isActive`, `createdAt`, `clickEvents[]`
+
+**ClickEvent**: `id`, `linkId`, `clickedAt` - Tracks individual clicks with timestamps
 
 **User**: `id`, `username` (unique), `password` (bcrypt hashed), `createdAt`
 
 ### Routes
 
 - `/` - Home page with URL shortener form (protected)
-- `/stats` - Statistics dashboard (protected)
+- `/stats` - Statistics dashboard with link management (protected)
 - `/login` - Login page
 - `/setup` - First-time admin setup (only accessible when no admin exists)
-- `/[shortCode]` - Public redirect handler
-- `/not-found` - Custom 404 page
+- `/[shortCode]` - Public redirect handler (redirects to /link-disabled if inactive)
+- `/link-disabled` - Page shown when accessing a disabled link
 
 ### Environment Variables (Vercel)
 
