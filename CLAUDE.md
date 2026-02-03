@@ -33,11 +33,12 @@ URL shortener SaaS with authentication, built with Next.js 16 (App Router), Pris
 ### Key Files
 
 - `lib/prisma.ts` - Singleton Prisma client with Turso/libSQL adapter
+- `lib/generated/prisma/` - Generated Prisma client (import from `@/lib/generated/prisma/client`)
 - `lib/auth.ts` - Authentication utilities (JWT, cookies, password hashing)
-- `app/actions/links.ts` - Server Action for creating shortened links
+- `app/actions/links.ts` - Server Action for creating shortened links (uses nanoid for 8-char codes)
 - `app/actions/auth.ts` - Server Actions for login/logout/setup
 - `app/[shortCode]/route.ts` - Dynamic route handler for redirects (increments clicks)
-- `middleware.ts` - Auth middleware protecting all routes except /login, /setup, /api, and short codes
+- `middleware.ts` - Auth middleware checking `auth-token` cookie; protects all routes except /login, /setup, /api, and short codes
 
 ### Database Models
 

@@ -2,6 +2,7 @@ import Link from "next/link";
 import { UrlShortenerForm } from "@/components/url-shortener-form";
 import { LogoutButton } from "@/components/logout-button";
 import { Button } from "@/components/ui/button";
+import { Logo } from "@/components/logo";
 import { BarChart3 } from "lucide-react";
 
 export default function Home() {
@@ -11,7 +12,8 @@ export default function Home() {
         <LogoutButton />
       </div>
       <div className="mb-8 text-center">
-        <h1 className="text-4xl font-bold tracking-tight mb-2">
+        <Logo size="lg" className="mb-4" />
+        <h1 className="text-2xl font-semibold tracking-tight mb-2 text-foreground">
           Raccourcisseur d&apos;URL
         </h1>
         <p className="text-muted-foreground">

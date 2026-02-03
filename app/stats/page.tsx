@@ -18,6 +18,7 @@ import { BarChart3, MousePointerClick, Link as LinkIcon } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { LogoutButton } from "@/components/logout-button";
+import { Logo } from "@/components/logo";
 
 export const dynamic = "force-dynamic";
 
@@ -36,8 +37,11 @@ export default async function StatsPage() {
       <div className="max-w-4xl mx-auto py-8">
         <div className="flex items-center justify-between mb-8">
           <div>
-            <h1 className="text-3xl font-bold tracking-tight flex items-center gap-2">
-              <BarChart3 className="h-8 w-8" />
+            <Link href="/">
+              <Logo size="sm" className="mb-2" />
+            </Link>
+            <h1 className="text-2xl font-bold tracking-tight flex items-center gap-2 text-foreground">
+              <BarChart3 className="h-6 w-6 text-primary" />
               Statistiques
             </h1>
             <p className="text-muted-foreground mt-1">

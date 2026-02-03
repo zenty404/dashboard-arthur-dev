@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import { isAuthenticated } from "@/lib/auth";
 import { hasAdmin } from "@/app/actions/auth";
 import { LoginForm } from "@/components/login-form";
+import { Logo } from "@/components/logo";
 
 export const dynamic = "force-dynamic";
 
@@ -19,9 +20,7 @@ export default async function LoginPage() {
   return (
     <main className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-b from-background to-muted p-4">
       <div className="mb-8 text-center">
-        <h1 className="text-4xl font-bold tracking-tight mb-2">
-          Raccourcisseur d&apos;URL
-        </h1>
+        <Logo size="lg" className="mb-4" />
         <p className="text-muted-foreground">
           Accès réservé aux administrateurs
         </p>
