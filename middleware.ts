@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
-const PUBLIC_PATHS = ["/login", "/setup", "/api"];
+const PUBLIC_PATHS = ["/login", "/setup", "/api", "/link-disabled"];
 
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
@@ -12,9 +12,9 @@ export function middleware(request: NextRequest) {
   }
 
   // Allow redirect routes (short codes)
-  // These are single-segment paths that aren't known routes
+  // These are single-segment paths that aren't known routes like /tools
   const segments = pathname.split("/").filter(Boolean);
-  if (segments.length === 1 && !["stats", "login", "setup"].includes(segments[0])) {
+  if (segments.length === 1 && !["tools", "login", "setup", "link-disabled"].includes(segments[0])) {
     return NextResponse.next();
   }
 

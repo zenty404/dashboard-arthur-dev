@@ -44,7 +44,7 @@ export async function createShortLink(
       },
     });
 
-    revalidatePath("/stats");
+    revalidatePath("/tools/link-tracker/stats");
     return { success: true, shortCode };
   } catch (error) {
     console.error("Erreur lors de la création du lien:", error);
@@ -57,7 +57,7 @@ export async function deleteLink(id: string): Promise<ActionResult> {
     await prisma.link.delete({
       where: { id },
     });
-    revalidatePath("/stats");
+    revalidatePath("/tools/link-tracker/stats");
     return { success: true };
   } catch (error) {
     console.error("Erreur lors de la suppression du lien:", error);
@@ -81,7 +81,7 @@ export async function toggleLinkActive(id: string): Promise<ActionResult> {
       data: { isActive: !link.isActive },
     });
 
-    revalidatePath("/stats");
+    revalidatePath("/tools/link-tracker/stats");
     return { success: true };
   } catch (error) {
     console.error("Erreur lors de la modification du lien:", error);

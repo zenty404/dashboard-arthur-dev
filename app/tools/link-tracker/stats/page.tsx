@@ -14,12 +14,12 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { BarChart3, MousePointerClick, Link as LinkIcon, CheckCircle, XCircle } from "lucide-react";
+import { BarChart3, MousePointerClick, Link as LinkIcon, CheckCircle, XCircle, ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { LogoutButton } from "@/components/logout-button";
 import { Logo } from "@/components/logo";
-import { LinkActions } from "@/components/link-actions";
+import { LinkActions } from "@/components/link-tracker/link-actions";
 
 export const dynamic = "force-dynamic";
 
@@ -38,7 +38,15 @@ export default async function StatsPage() {
       <div className="max-w-4xl mx-auto py-8">
         <div className="flex items-center justify-between mb-8">
           <div>
-            <Link href="/">
+            <div className="flex items-center gap-4 mb-2">
+              <Button variant="ghost" size="sm" asChild>
+                <Link href="/" className="flex items-center gap-2">
+                  <ArrowLeft className="h-4 w-4" />
+                  Dashboard
+                </Link>
+              </Button>
+            </div>
+            <Link href="/tools/link-tracker">
               <Logo size="sm" className="mb-2" />
             </Link>
             <h1 className="text-2xl font-bold tracking-tight flex items-center gap-2 text-foreground">
@@ -51,7 +59,7 @@ export default async function StatsPage() {
           </div>
           <div className="flex items-center gap-2">
             <Button asChild>
-              <Link href="/">Créer un lien</Link>
+              <Link href="/tools/link-tracker">Créer un lien</Link>
             </Button>
             <LogoutButton />
           </div>

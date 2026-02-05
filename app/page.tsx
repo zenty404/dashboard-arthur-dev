@@ -1,30 +1,30 @@
-import Link from "next/link";
-import { UrlShortenerForm } from "@/components/url-shortener-form";
 import { LogoutButton } from "@/components/logout-button";
-import { Button } from "@/components/ui/button";
 import { Logo } from "@/components/logo";
-import { BarChart3 } from "lucide-react";
+import { ToolCard } from "@/components/dashboard/tool-card";
+import { tools } from "@/lib/tools";
 
-export default function Home() {
+export default function DashboardPage() {
   return (
-    <main className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-b from-background to-muted p-4">
-      <div className="absolute top-4 right-4">
-        <LogoutButton />
-      </div>
-      <div className="mb-8 text-center">
-        <Logo size="lg" className="mb-4" />
-        <h1 className="text-2xl font-semibold tracking-tight text-foreground">
-          Suivi de liens
-        </h1>
-      </div>
-      <UrlShortenerForm />
-      <div className="mt-6">
-        <Button variant="ghost" asChild>
-          <Link href="/stats" className="flex items-center gap-2">
-            <BarChart3 className="h-4 w-4" />
-            Voir les statistiques
-          </Link>
-        </Button>
+    <main className="min-h-screen bg-gradient-to-b from-background to-muted">
+      <div className="max-w-4xl mx-auto py-8 px-4">
+        <div className="flex items-center justify-between mb-8">
+          <div>
+            <Logo size="lg" className="mb-2" />
+            <h1 className="text-2xl font-bold tracking-tight text-foreground">
+              Dashboard
+            </h1>
+            <p className="text-muted-foreground mt-1">
+              Sélectionnez un outil pour commencer
+            </p>
+          </div>
+          <LogoutButton />
+        </div>
+
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+          {tools.map((tool) => (
+            <ToolCard key={tool.id} tool={tool} />
+          ))}
+        </div>
       </div>
     </main>
   );

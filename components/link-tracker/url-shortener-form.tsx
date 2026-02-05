@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { createShortLink } from "@/app/actions/links";
+import { createShortLink } from "@/app/tools/link-tracker/actions";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {

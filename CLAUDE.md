@@ -30,7 +30,7 @@ Required environment variables in `.env`:
 
 ## Architecture
 
-URL shortener SaaS with authentication, built with Next.js 16 (App Router), Prisma 7, and Turso (libSQL).
+Multi-tool enterprise dashboard with authentication, built with Next.js 16 (App Router), Prisma 7, and Turso (libSQL).
 
 ### Tech Stack
 - **Framework**: Next.js 16 with App Router and React 19
@@ -39,15 +39,49 @@ URL shortener SaaS with authentication, built with Next.js 16 (App Router), Pris
 - **UI**: Tailwind CSS 4 + Shadcn UI components
 - **Icons**: Lucide React
 
+### Project Structure
+
+```
+app/
+├── page.tsx                          # Dashboard (tool selection)
+├── layout.tsx                        # Root layout
+├── login/page.tsx                    # Login page
+├── setup/page.tsx                    # First-time admin setup
+├── link-disabled/page.tsx            # Disabled link page
+├── [shortCode]/route.ts              # Public redirect handler
+└── tools/                            # All tools
+    └── link-tracker/                 # Link Tracker tool
+        ├── page.tsx                  # Link creation page
+        ├── stats/page.tsx            # Statistics page
+        └── actions.ts                # Server actions
+
+components/
+├── ui/                               # Shadcn UI components
+├── logo.tsx
+├── logout-button.tsx
+├── dashboard/                        # Dashboard components
+│   └── tool-card.tsx                 # Tool card component
+└── link-tracker/                     # Link Tracker components
+    ├── url-shortener-form.tsx
+    └── link-actions.tsx
+
+lib/
+├── auth.ts                           # Authentication utilities
+├── prisma.ts                         # Prisma client singleton
+├── utils.ts                          # Utility functions
+└── tools.ts                          # Tools configuration
+```
+
 ### Key Files
 
 - `lib/prisma.ts` - Singleton Prisma client with Turso/libSQL adapter
 - `lib/generated/prisma/` - Generated Prisma client (import from `@/lib/generated/prisma/client`)
 - `lib/auth.ts` - Authentication utilities (JWT, cookies, password hashing)
-- `app/actions/links.ts` - Server Actions for link management (create, delete, toggle, getClickEvents)
+- `lib/tools.ts` - Tools configuration (add new tools here)
+- `app/tools/link-tracker/actions.ts` - Server Actions for link management
 - `app/actions/auth.ts` - Server Actions for login/logout/setup
-- `app/[shortCode]/route.ts` - Dynamic route handler for redirects (checks isActive, creates ClickEvent, increments clicks)
-- `middleware.ts` - Auth middleware checking `auth-token` cookie; protects all routes except /login, /setup, /api, and short codes
+- `app/[shortCode]/route.ts` - Dynamic route handler for redirects
+- `middleware.ts` - Auth middleware protecting routes except /login, /setup, /api, /link-disabled, and short codes
 
 ### Database Models
 
@@ -59,12 +93,19 @@ URL shortener SaaS with authentication, built with Next.js 16 (App Router), Pris
 
 ### Routes
 
-- `/` - Home page with URL shortener form (protected)
-- `/stats` - Statistics dashboard with link management (protected)
+- `/` - Dashboard with tool selection (protected)
+- `/tools/link-tracker` - Link Tracker: create shortened links (protected)
+- `/tools/link-tracker/stats` - Link Tracker: statistics dashboard (protected)
 - `/login` - Login page
 - `/setup` - First-time admin setup (only accessible when no admin exists)
 - `/[shortCode]` - Public redirect handler (uses transaction to atomically increment clicks and create ClickEvent; redirects to /link-disabled if inactive)
 - `/link-disabled` - Page shown when accessing a disabled link
+
+### Adding New Tools
+
+1. Add tool configuration to `lib/tools.ts`
+2. Create tool folder in `app/tools/[tool-name]/`
+3. Add tool components to `components/[tool-name]/`
 
 ### Environment Variables (Production/Vercel)
 

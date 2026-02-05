@@ -2,7 +2,7 @@
 
 import { useState, useTransition } from "react";
 import { Button } from "@/components/ui/button";
-import { deleteLink, toggleLinkActive } from "@/app/actions/links";
+import { deleteLink, toggleLinkActive } from "@/app/tools/link-tracker/actions";
 import { Trash2, Power, PowerOff, Loader2 } from "lucide-react";
 
 interface LinkActionsProps {
