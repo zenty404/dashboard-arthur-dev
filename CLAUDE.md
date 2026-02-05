@@ -54,10 +54,16 @@ app/
 ├── link-disabled/page.tsx            # Disabled link page
 ├── [shortCode]/route.ts              # Public redirect handler
 └── tools/                            # All tools
-    └── link-tracker/                 # Link Tracker tool
-        ├── page.tsx                  # Link creation page
-        ├── stats/page.tsx            # Statistics page
-        └── actions.ts                # Server actions
+    ├── link-tracker/                 # Link Tracker tool
+    │   ├── page.tsx                  # Link creation page
+    │   ├── stats/page.tsx            # Statistics page
+    │   └── actions.ts                # Server actions
+    ├── qr-generator/                 # QR Code Generator tool
+    │   ├── page.tsx                  # QR code creation page
+    │   ├── history/page.tsx          # Saved QR codes history
+    │   └── actions.ts                # Server actions
+    └── invoice-generator/            # Invoice Generator tool
+        └── page.tsx                  # Invoice creation with live PDF preview
 
 components/
 ├── ui/                               # Shadcn UI components
@@ -65,15 +71,23 @@ components/
 ├── logout-button.tsx
 ├── dashboard/                        # Dashboard components
 │   └── tool-card.tsx                 # Tool card component
-└── link-tracker/                     # Link Tracker components
-    ├── url-shortener-form.tsx
-    └── link-actions.tsx
+├── link-tracker/                     # Link Tracker components
+│   ├── url-shortener-form.tsx
+│   └── link-actions.tsx
+├── qr-generator/                     # QR Generator components
+│   ├── qr-form.tsx
+│   └── qr-actions.tsx
+└── invoice-generator/                # Invoice Generator components
+    ├── invoice-form.tsx
+    ├── invoice-pdf.tsx               # PDF template (@react-pdf/renderer)
+    └── invoice-preview.tsx
 
 lib/
 ├── auth.ts                           # Authentication utilities
 ├── prisma.ts                         # Prisma client singleton
 ├── utils.ts                          # Utility functions
-└── tools.ts                          # Tools configuration
+├── tools.ts                          # Tools configuration
+└── invoice-defaults.ts               # Invoice emitter info and defaults
 ```
 
 ### Key Files
@@ -93,6 +107,8 @@ lib/
 
 **ClickEvent**: `id`, `linkId`, `clickedAt` - Tracks individual clicks with timestamps
 
+**QrCode**: `id`, `content`, `label`, `size`, `scans`, `createdAt` - Saved QR codes
+
 **User**: `id`, `username` (unique), `password` (bcrypt hashed), `createdAt`
 
 ### Routes
@@ -100,6 +116,9 @@ lib/
 - `/` - Dashboard with tool selection (protected)
 - `/tools/link-tracker` - Link Tracker: create shortened links (protected)
 - `/tools/link-tracker/stats` - Link Tracker: statistics dashboard (protected)
+- `/tools/qr-generator` - QR Generator: create QR codes (protected)
+- `/tools/qr-generator/history` - QR Generator: saved QR codes (protected)
+- `/tools/invoice-generator` - Invoice Generator: create PDF invoices (protected)
 - `/login` - Login page
 - `/setup` - First-time admin setup (only accessible when no admin exists)
 - `/[shortCode]` - Public redirect handler (uses transaction to atomically increment clicks and create ClickEvent; redirects to /link-disabled if inactive)
@@ -121,4 +140,4 @@ lib/
 
 - **Production URL**: https://dashboard-arthur-dev.vercel.app
 - **GitHub**: https://github.com/zenty404/dashboard-arthur-dev
-- **Vercel Project**: saas-shortener-test
+- **Vercel Project**: dashboard-arthur-dev
