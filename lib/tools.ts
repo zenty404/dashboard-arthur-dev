@@ -1,4 +1,4 @@
-import { Link, QrCode, LucideIcon } from "lucide-react";
+import { Link, QrCode, FileText, LucideIcon } from "lucide-react";
 
 export interface Tool {
   id: string;
@@ -25,5 +25,13 @@ export const tools: Tool[] = [
     icon: QrCode,
     href: "/tools/qr-generator",
     color: "purple",
+  },
+  {
+    id: "invoice-generator",
+    name: "Factures",
+    description: "Générer des factures PDF",
+    icon: FileText,
+    href: "/tools/invoice-generator",
+    color: "green",
   },
 ];
