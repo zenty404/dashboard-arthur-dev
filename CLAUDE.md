@@ -16,6 +16,10 @@ npx prisma db push                    # Push schema changes to local SQLite
 # Turso CLI (production database)
 turso db shell saas-shortener         # Open SQL shell
 turso db shell saas-shortener "SQL"   # Execute SQL query
+
+# Vercel CLI
+vercel --prod                         # Deploy to production
+vercel alias set <deployment> dashboard-arthur-dev.vercel.app  # Set alias
 ```
 
 **Important**: Schema changes require updating both local (prisma db push) and production (Turso SQL) databases separately.
@@ -112,3 +116,9 @@ lib/
 - `TURSO_DATABASE_URL` - Turso database URL (libsql://...)
 - `TURSO_AUTH_TOKEN` - Turso authentication token
 - `JWT_SECRET` - Secret for signing JWT tokens
+
+## Deployment
+
+- **Production URL**: https://dashboard-arthur-dev.vercel.app
+- **GitHub**: https://github.com/zenty404/dashboard-arthur-dev
+- **Vercel Project**: saas-shortener-test
