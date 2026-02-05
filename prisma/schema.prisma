@@ -33,3 +33,12 @@ model User {
   password  String
   createdAt DateTime @default(now())
 }
+
+model QrCode {
+  id        String   @id @default(cuid())
+  content   String
+  label     String?
+  size      Int      @default(256)
+  scans     Int      @default(0)
+  createdAt DateTime @default(now())
+}

@@ -1,4 +1,4 @@
-import { Link, LucideIcon } from "lucide-react";
+import { Link, QrCode, LucideIcon } from "lucide-react";
 
 export interface Tool {
   id: string;
@@ -17,5 +17,13 @@ export const tools: Tool[] = [
     icon: Link,
     href: "/tools/link-tracker",
     color: "blue",
+  },
+  {
+    id: "qr-generator",
+    name: "QR Generator",
+    description: "Générer et gérer des QR codes",
+    icon: QrCode,
+    href: "/tools/qr-generator",
+    color: "purple",
   },
 ];
