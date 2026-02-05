@@ -20,6 +20,14 @@ turso db shell saas-shortener "SQL"   # Execute SQL query
 
 **Important**: Schema changes require updating both local (prisma db push) and production (Turso SQL) databases separately.
 
+## Local Development Setup
+
+Required environment variables in `.env`:
+- `DATABASE_URL` - Local SQLite path (e.g., `file:./dev.db`)
+- `TURSO_DATABASE_URL` - Turso URL for production data access
+- `TURSO_AUTH_TOKEN` - Turso auth token
+- `JWT_SECRET` - Secret for JWT signing (defaults to dev value if unset)
+
 ## Architecture
 
 URL shortener SaaS with authentication, built with Next.js 16 (App Router), Prisma 7, and Turso (libSQL).
@@ -43,7 +51,7 @@ URL shortener SaaS with authentication, built with Next.js 16 (App Router), Pris
 
 ### Database Models
 
-**Link**: `id`, `originalUrl`, `shortCode` (unique, 8 chars), `clicks`, `isActive`, `createdAt`, `clickEvents[]`
+**Link**: `id`, `originalUrl`, `shortCode` (unique, nanoid 8 chars), `clicks`, `isActive`, `createdAt`, `clickEvents[]`
 
 **ClickEvent**: `id`, `linkId`, `clickedAt` - Tracks individual clicks with timestamps
 
@@ -55,10 +63,10 @@ URL shortener SaaS with authentication, built with Next.js 16 (App Router), Pris
 - `/stats` - Statistics dashboard with link management (protected)
 - `/login` - Login page
 - `/setup` - First-time admin setup (only accessible when no admin exists)
-- `/[shortCode]` - Public redirect handler (redirects to /link-disabled if inactive)
+- `/[shortCode]` - Public redirect handler (uses transaction to atomically increment clicks and create ClickEvent; redirects to /link-disabled if inactive)
 - `/link-disabled` - Page shown when accessing a disabled link
 
-### Environment Variables (Vercel)
+### Environment Variables (Production/Vercel)
 
 - `TURSO_DATABASE_URL` - Turso database URL (libsql://...)
 - `TURSO_AUTH_TOKEN` - Turso authentication token
