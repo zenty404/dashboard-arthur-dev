@@ -13,8 +13,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Arthur.dev - Suivi de liens",
-  description: "Outil interne de suivi de liens",
+  title: "Dashboard-Arthur-Dev",
+  description: "Dashboard d'outils internes",
 };
 
 export default function RootLayout({
