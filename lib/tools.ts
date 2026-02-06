@@ -1,4 +1,4 @@
-import { Link, QrCode, FileText, LucideIcon } from "lucide-react";
+import { Link, QrCode, FileText, Activity, LucideIcon } from "lucide-react";
 
 export interface Tool {
   id: string;
@@ -33,5 +33,13 @@ export const tools: Tool[] = [
     icon: FileText,
     href: "/tools/invoice-generator",
     color: "green",
+  },
+  {
+    id: "uptime-monitor",
+    name: "Moniteur de Sites",
+    description: "Surveiller la disponibilité de vos sites web",
+    icon: Activity,
+    href: "/tools/uptime-monitor",
+    color: "orange",
   },
 ];

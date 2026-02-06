@@ -42,3 +42,23 @@ model QrCode {
   scans     Int      @default(0)
   createdAt DateTime @default(now())
 }
+
+model MonitoredSite {
+  id           String        @id @default(cuid())
+  url          String
+  label        String?
+  isActive     Boolean       @default(true)
+  createdAt    DateTime      @default(now())
+  uptimeChecks UptimeCheck[]
+}
+
+model UptimeCheck {
+  id           String        @id @default(cuid())
+  siteId       String
+  site         MonitoredSite @relation(fields: [siteId], references: [id], onDelete: Cascade)
+  statusCode   Int?
+  responseTime Int?
+  isUp         Boolean
+  error        String?
+  checkedAt    DateTime      @default(now())
+}

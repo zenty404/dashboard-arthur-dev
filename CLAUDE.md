@@ -17,12 +17,15 @@ npx prisma db push                    # Push schema changes to local SQLite
 turso db shell saas-shortener         # Open SQL shell
 turso db shell saas-shortener "SQL"   # Execute SQL query
 
+# Shadcn UI
+npx shadcn@latest add <component>    # Add a Shadcn component
+
 # Vercel CLI
 vercel --prod                         # Deploy to production
 vercel alias set <deployment> dashboard-arthur-dev.vercel.app  # Set alias
 ```
 
-**Important**: Schema changes require updating both local (prisma db push) and production (Turso SQL) databases separately.
+**Important**: Schema changes require updating both local (`prisma db push`) and production (Turso SQL) databases separately.
 
 ## Local Development Setup
 
@@ -32,6 +35,8 @@ Required environment variables in `.env`:
 - `TURSO_AUTH_TOKEN` - Turso auth token
 - `JWT_SECRET` - Secret for JWT signing (defaults to dev value if unset)
 
+No test runner is configured. There are no tests in the project.
+
 ## Architecture
 
 Multi-tool enterprise dashboard with authentication, built with Next.js 16 (App Router), Prisma 7, and Turso (libSQL).
@@ -39,102 +44,58 @@ Multi-tool enterprise dashboard with authentication, built with Next.js 16 (App 
 ### Tech Stack
 - **Framework**: Next.js 16 with App Router and React 19
 - **Database**: Turso (libSQL) via Prisma 7 with `@prisma/adapter-libsql`
-- **Auth**: bcryptjs (password hashing) + jsonwebtoken (sessions)
-- **UI**: Tailwind CSS 4 + Shadcn UI components
+- **Auth**: bcryptjs (password hashing) + jsonwebtoken (JWT sessions, 7-day expiry)
+- **UI**: Tailwind CSS 4 (inline config in `globals.css`, no tailwind.config file) + Shadcn UI (new-york style)
 - **Icons**: Lucide React
+- **PDF**: `@react-pdf/renderer` for invoice generation
 
-### Project Structure
+### Key Conventions
 
-```
-app/
-├── page.tsx                          # Dashboard (tool selection)
-├── layout.tsx                        # Root layout
-├── login/page.tsx                    # Login page
-├── setup/page.tsx                    # First-time admin setup
-├── link-disabled/page.tsx            # Disabled link page
-├── [shortCode]/route.ts              # Public redirect handler
-└── tools/                            # All tools
-    ├── link-tracker/                 # Link Tracker tool
-    │   ├── page.tsx                  # Link creation page
-    │   ├── stats/page.tsx            # Statistics page
-    │   └── actions.ts                # Server actions
-    ├── qr-generator/                 # QR Code Generator tool
-    │   ├── page.tsx                  # QR code creation page
-    │   ├── history/page.tsx          # Saved QR codes history
-    │   └── actions.ts                # Server actions
-    └── invoice-generator/            # Invoice Generator tool
-        └── page.tsx                  # Invoice creation with live PDF preview
+- **UI text is in French.** Tool descriptions in `lib/tools.ts`, form labels, and user-facing strings are all written in French.
+- **Prisma imports**: Always import from `@/lib/generated/prisma/client`, not from `@prisma/client`.
+- **Path alias**: `@/*` maps to the project root (e.g., `@/lib/auth`, `@/components/ui/button`).
 
-components/
-├── ui/                               # Shadcn UI components
-├── logo.tsx
-├── logout-button.tsx
-├── dashboard/                        # Dashboard components
-│   └── tool-card.tsx                 # Tool card component
-├── link-tracker/                     # Link Tracker components
-│   ├── url-shortener-form.tsx
-│   └── link-actions.tsx
-├── qr-generator/                     # QR Generator components
-│   ├── qr-form.tsx
-│   └── qr-actions.tsx
-└── invoice-generator/                # Invoice Generator components
-    ├── invoice-form.tsx
-    ├── invoice-pdf.tsx               # PDF template (@react-pdf/renderer)
-    └── invoice-preview.tsx
+### Project Layout
 
-lib/
-├── auth.ts                           # Authentication utilities
-├── prisma.ts                         # Prisma client singleton
-├── utils.ts                          # Utility functions
-├── tools.ts                          # Tools configuration
-└── invoice-defaults.ts               # Invoice emitter info and defaults
-```
+- `app/` - Next.js App Router pages and API routes
+- `app/tools/[tool-name]/` - Each tool has its own folder with `page.tsx` and optional `actions.ts` (Server Actions)
+- `app/[shortCode]/route.ts` - Public redirect handler for shortened links
+- `app/actions/auth.ts` - Auth Server Actions (login, logout, setup)
+- `components/[tool-name]/` - Tool-specific components, `components/ui/` for Shadcn
+- `lib/` - Shared utilities (auth, prisma, tools config, invoice defaults)
+- `middleware.ts` - Auth middleware
 
-### Key Files
+### Database
 
-- `lib/prisma.ts` - Singleton Prisma client with Turso/libSQL adapter
-- `lib/generated/prisma/` - Generated Prisma client (import from `@/lib/generated/prisma/client`)
-- `lib/auth.ts` - Authentication utilities (JWT, cookies, password hashing)
-- `lib/tools.ts` - Tools configuration (add new tools here)
-- `app/tools/link-tracker/actions.ts` - Server Actions for link management
-- `app/actions/auth.ts` - Server Actions for login/logout/setup
-- `app/[shortCode]/route.ts` - Dynamic route handler for redirects
-- `middleware.ts` - Auth middleware protecting routes except /login, /setup, /api, /link-disabled, and short codes
+**Prisma + Turso/libSQL.** `lib/prisma.ts` creates a singleton client using the `@prisma/adapter-libsql` adapter. `TURSO_DATABASE_URL` is required at runtime (throws if missing).
 
-### Database Models
+**Models**: Link (with ClickEvent for individual click tracking), QrCode, User, MonitoredSite (with UptimeCheck for uptime monitoring). Schema is in `prisma/schema.prisma`.
 
-**Link**: `id`, `originalUrl`, `shortCode` (unique, nanoid 8 chars), `clicks`, `isActive`, `createdAt`, `clickEvents[]`
+### Authentication
 
-**ClickEvent**: `id`, `linkId`, `clickedAt` - Tracks individual clicks with timestamps
-
-**QrCode**: `id`, `content`, `label`, `size`, `scans`, `createdAt` - Saved QR codes
-
-**User**: `id`, `username` (unique), `password` (bcrypt hashed), `createdAt`
-
-### Routes
-
-- `/` - Dashboard with tool selection (protected)
-- `/tools/link-tracker` - Link Tracker: create shortened links (protected)
-- `/tools/link-tracker/stats` - Link Tracker: statistics dashboard (protected)
-- `/tools/qr-generator` - QR Generator: create QR codes (protected)
-- `/tools/qr-generator/history` - QR Generator: saved QR codes (protected)
-- `/tools/invoice-generator` - Invoice Generator: create PDF invoices (protected)
-- `/login` - Login page
-- `/setup` - First-time admin setup (only accessible when no admin exists)
-- `/[shortCode]` - Public redirect handler (uses transaction to atomically increment clicks and create ClickEvent; redirects to /link-disabled if inactive)
-- `/link-disabled` - Page shown when accessing a disabled link
+- Cookie-based JWT auth with `auth-token` cookie (HttpOnly, 7-day expiry, Secure in production)
+- `middleware.ts` protects all routes except: `/login`, `/setup`, `/api`, `/link-disabled`, and single-segment paths (short code redirects)
+- `/setup` creates the first admin user (only works when no users exist)
+- Password hashing: bcryptjs with 12 salt rounds
 
 ### Adding New Tools
 
-1. Add tool configuration to `lib/tools.ts`
-2. Create tool folder in `app/tools/[tool-name]/`
-3. Add tool components to `components/[tool-name]/`
+1. Add tool config to `lib/tools.ts` (implements `Tool` interface with id, name, description, icon, href, color)
+2. Create `app/tools/[tool-name]/page.tsx` (and `actions.ts` for Server Actions)
+3. Create `components/[tool-name]/` for tool-specific components
+4. Add any new Prisma models to `prisma/schema.prisma` and run `npx prisma db push` + update Turso
 
-### Environment Variables (Production/Vercel)
+### Theme
 
-- `TURSO_DATABASE_URL` - Turso database URL (libsql://...)
-- `TURSO_AUTH_TOKEN` - Turso authentication token
-- `JWT_SECRET` - Secret for signing JWT tokens
+Dark midnight navy theme defined via CSS custom properties in `app/globals.css` using Tailwind v4 `@theme inline`. Primary color is cyan blue (`#0ea5e9`), background is dark navy (`#0c1526`).
+
+### Invoice Generator
+
+Emitter business info (name, address, SIRET, bank details) is hardcoded in `lib/invoice-defaults.ts`. Update this file to change invoice sender details.
+
+### Uptime Monitor
+
+Site availability monitoring tool. `lib/uptime.ts` contains the shared `performCheck` utility (HTTP HEAD with 10s timeout). Automatic checks run hourly via Vercel Cron (`/api/cron/uptime`, protected by `CRON_SECRET` env var). Checks older than 30 days are auto-cleaned. Config in `vercel.json`.
 
 ## Deployment
 
