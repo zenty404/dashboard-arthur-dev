@@ -21,7 +21,7 @@ turso db shell saas-shortener "SQL"   # Execute SQL query
 npx shadcn@latest add <component>    # Add a Shadcn component
 
 # Vercel CLI
-vercel --prod                         # Deploy to production
+vercel --prod --yes                   # Deploy to production
 vercel alias set <deployment> dashboard-arthur-dev.vercel.app  # Set alias
 ```
 
@@ -34,6 +34,9 @@ Required environment variables in `.env`:
 - `TURSO_DATABASE_URL` - Turso URL for production data access
 - `TURSO_AUTH_TOKEN` - Turso auth token
 - `JWT_SECRET` - Secret for JWT signing (defaults to dev value if unset)
+- `CRON_SECRET` - Bearer token protecting the `/api/cron/uptime` endpoint (production only)
+
+`npm install` auto-runs `prisma generate` via postinstall hook. The generated Prisma client (`lib/generated/prisma/`) is gitignored, so `npm install` or `npx prisma generate` must run after a fresh clone before the project will compile.
 
 No test runner is configured. There are no tests in the project.
 
@@ -45,9 +48,10 @@ Multi-tool enterprise dashboard with authentication, built with Next.js 16 (App 
 - **Framework**: Next.js 16 with App Router and React 19
 - **Database**: Turso (libSQL) via Prisma 7 with `@prisma/adapter-libsql`
 - **Auth**: bcryptjs (password hashing) + jsonwebtoken (JWT sessions, 7-day expiry)
-- **UI**: Tailwind CSS 4 (inline config in `globals.css`, no tailwind.config file) + Shadcn UI (new-york style)
+- **UI**: Tailwind CSS 4 (inline config in `globals.css`, no tailwind.config file) + Shadcn UI (new-york style, config in `components.json`)
 - **Icons**: Lucide React
-- **PDF**: `@react-pdf/renderer` for invoice generation
+- **PDF**: `@react-pdf/renderer` for client-side invoice generation
+- **IDs**: `nanoid` for generating short codes
 
 ### Key Conventions
 
@@ -80,7 +84,7 @@ Multi-tool enterprise dashboard with authentication, built with Next.js 16 (App 
 
 ### Adding New Tools
 
-1. Add tool config to `lib/tools.ts` (implements `Tool` interface with id, name, description, icon, href, color)
+1. Add tool config to `lib/tools.ts` (implements `Tool` interface with id, name, description, icon, href, color). Available colors: `blue`, `green`, `purple`, `orange`, `red`.
 2. Create `app/tools/[tool-name]/page.tsx` (and `actions.ts` for Server Actions)
 3. Create `components/[tool-name]/` for tool-specific components
 4. Add any new Prisma models to `prisma/schema.prisma` and run `npx prisma db push` + update Turso
@@ -91,11 +95,11 @@ Dark midnight navy theme defined via CSS custom properties in `app/globals.css` 
 
 ### Invoice Generator
 
-Emitter business info (name, address, SIRET, bank details) is hardcoded in `lib/invoice-defaults.ts`. Update this file to change invoice sender details.
+Fully client-side tool — no `actions.ts` or server actions. PDF is rendered in the browser using `@react-pdf/renderer`. Emitter business info (name, address, SIRET, bank details) is hardcoded in `lib/invoice-defaults.ts`. Update this file to change invoice sender details.
 
 ### Uptime Monitor
 
-Site availability monitoring tool. `lib/uptime.ts` contains the shared `performCheck` utility (HTTP HEAD with 10s timeout). Automatic checks run hourly via Vercel Cron (`/api/cron/uptime`, protected by `CRON_SECRET` env var). Checks older than 30 days are auto-cleaned. Config in `vercel.json`.
+Site availability monitoring tool. `lib/uptime.ts` contains the shared `performCheck` utility (HTTP HEAD with 10s timeout). Automatic checks run daily via Vercel Cron (`/api/cron/uptime`, protected by `CRON_SECRET` env var). Auto-check on page load + refresh every 60s via client-side `AutoChecker` component. Checks older than 30 days are auto-cleaned. Config in `vercel.json`.
 
 ## Deployment
 
