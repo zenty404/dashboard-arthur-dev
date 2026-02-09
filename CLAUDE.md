@@ -50,7 +50,7 @@ Multi-tool enterprise dashboard with authentication, built with Next.js 16 (App 
 - **Auth**: bcryptjs (password hashing) + jsonwebtoken (JWT sessions, 7-day expiry)
 - **UI**: Tailwind CSS 4 (inline config in `globals.css`, no tailwind.config file) + Shadcn UI (new-york style, config in `components.json`)
 - **Icons**: Lucide React
-- **PDF**: `@react-pdf/renderer` for client-side invoice generation
+- **PDF**: `@react-pdf/renderer` for client-side invoice and quote generation
 - **IDs**: `nanoid` for generating short codes
 
 ### Key Conventions
@@ -95,7 +95,11 @@ Dark midnight navy theme defined via CSS custom properties in `app/globals.css` 
 
 ### Invoice Generator
 
-Fully client-side tool — no `actions.ts` or server actions. PDF is rendered in the browser using `@react-pdf/renderer`. Emitter business info (name, address, SIRET, bank details) is hardcoded in `lib/invoice-defaults.ts`. Update this file to change invoice sender details.
+Fully client-side tool — no `actions.ts` or server actions. PDF is rendered in the browser using `@react-pdf/renderer`. Emitter business info (name, address, SIRET, bank details) is hardcoded in `lib/invoice-defaults.ts`. Update this file to change invoice sender details. Supports pre-filling via `?data=<base64-json>` URL param (used by the Quote Generator's "Convertir en facture" flow).
+
+### Quote Generator
+
+Client-side PDF tool mirroring the Invoice Generator architecture. Types in `lib/quote-defaults.ts` (reuses `InvoiceItem` from invoice-defaults). Key differences from invoices: quote number prefixed `D-`, validity period in days, CONDITIONS section instead of payment info, and "Bon pour accord" signature zone on the PDF. "Convertir en facture" button serializes `QuoteData` as base64 JSON and redirects to `/tools/invoice-generator?data=...`, which maps `quoteNumber` → `invoiceNumber` (stripping the `D-` prefix).
 
 ### Uptime Monitor
 
