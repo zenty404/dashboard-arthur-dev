@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -11,42 +10,24 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { InvoiceData, InvoiceItem, DEFAULT_INVOICE } from "@/lib/invoice-defaults";
-import { Plus, Trash2, FileText } from "lucide-react";
+import { InvoiceItem } from "@/lib/invoice-defaults";
+import { QuoteData, DEFAULT_QUOTE } from "@/lib/quote-defaults";
+import { Plus, Trash2, FileSignature, FileText } from "lucide-react";
+import { useRouter } from "next/navigation";
 import dynamic from "next/dynamic";
 
-const InvoicePreview = dynamic(
-  () => import("./invoice-preview").then((mod) => mod.InvoicePreview),
+const QuotePreview = dynamic(
+  () => import("./quote-preview").then((mod) => mod.QuotePreview),
   { ssr: false, loading: () => <div className="flex items-center justify-center h-[600px] bg-muted rounded-lg">Chargement...</div> }
 );
 
-function getInitialData(searchParams: URLSearchParams): InvoiceData {
-  const encoded = searchParams.get("data");
-  if (encoded) {
-    try {
-      const decoded = JSON.parse(atob(encoded));
-      return {
-        invoiceNumber: (decoded.quoteNumber || "").replace(/^D-/, ""),
-        invoiceDate: decoded.quoteDate || new Date().toLocaleDateString("fr-FR"),
-        clientName: decoded.clientName || "",
-        clientAddress: decoded.clientAddress || "",
-        clientCity: decoded.clientCity || "",
-        items: decoded.items || DEFAULT_INVOICE.items,
-      };
-    } catch {
-      // Invalid data param, fall through
-    }
-  }
-  return DEFAULT_INVOICE;
-}
+export function QuoteForm() {
+  const [data, setData] = useState<QuoteData>(DEFAULT_QUOTE);
+  const router = useRouter();
 
-export function InvoiceForm() {
-  const searchParams = useSearchParams();
-  const [data, setData] = useState<InvoiceData>(() => getInitialData(searchParams));
-
-  const updateField = <K extends keyof InvoiceData>(
+  const updateField = <K extends keyof QuoteData>(
     field: K,
-    value: InvoiceData[K]
+    value: QuoteData[K]
   ) => {
     setData((prev) => ({ ...prev, [field]: value }));
   };
@@ -114,6 +95,11 @@ export function InvoiceForm() {
     }));
   };
 
+  const convertToInvoice = () => {
+    const encoded = btoa(JSON.stringify(data));
+    router.push(`/tools/invoice-generator?data=${encoded}`);
+  };
+
   const totalHT = data.items.reduce(
     (sum, item) => sum + item.quantity * item.unitPrice,
     0
@@ -126,26 +112,37 @@ export function InvoiceForm() {
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <FileText className="h-5 w-5 text-primary" />
-              Informations Facture
+              <FileSignature className="h-5 w-5 text-primary" />
+              Informations Devis
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-3 gap-4">
               <div className="space-y-2">
-                <label className="text-sm font-medium">N° Facture</label>
+                <label className="text-sm font-medium">N° Devis</label>
                 <Input
-                  value={data.invoiceNumber}
-                  onChange={(e) => updateField("invoiceNumber", e.target.value)}
-                  placeholder="2026-01"
+                  value={data.quoteNumber}
+                  onChange={(e) => updateField("quoteNumber", e.target.value)}
+                  placeholder="D-2026-01"
                 />
               </div>
               <div className="space-y-2">
                 <label className="text-sm font-medium">Date</label>
                 <Input
-                  value={data.invoiceDate}
-                  onChange={(e) => updateField("invoiceDate", e.target.value)}
-                  placeholder="26/01/2026"
+                  value={data.quoteDate}
+                  onChange={(e) => updateField("quoteDate", e.target.value)}
+                  placeholder="09/02/2026"
+                />
+              </div>
+              <div className="space-y-2">
+                <label className="text-sm font-medium">Validité (jours)</label>
+                <Input
+                  type="number"
+                  min={1}
+                  value={data.validityDays}
+                  onChange={(e) =>
+                    updateField("validityDays", parseInt(e.target.value) || 30)
+                  }
                 />
               </div>
             </div>
@@ -188,7 +185,7 @@ export function InvoiceForm() {
           <CardHeader className="flex flex-row items-center justify-between">
             <div>
               <CardTitle>Prestations</CardTitle>
-              <CardDescription>Lignes de facturation</CardDescription>
+              <CardDescription>Lignes du devis</CardDescription>
             </div>
             <Button onClick={addItem} size="sm" variant="outline">
               <Plus className="h-4 w-4 mr-1" />
@@ -300,6 +297,15 @@ export function InvoiceForm() {
             </div>
           </CardContent>
         </Card>
+
+        <Button
+          onClick={convertToInvoice}
+          variant="outline"
+          className="w-full"
+        >
+          <FileText className="h-4 w-4 mr-2" />
+          Convertir en facture
+        </Button>
       </div>
 
       {/* Preview */}
@@ -312,7 +318,7 @@ export function InvoiceForm() {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <InvoicePreview data={data} />
+            <QuotePreview data={data} />
           </CardContent>
         </Card>
       </div>

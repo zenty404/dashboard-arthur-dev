@@ -1,12 +1,11 @@
-import { Suspense } from "react";
 import { Button } from "@/components/ui/button";
 import { LogoutButton } from "@/components/logout-button";
 import { Logo } from "@/components/logo";
-import { InvoiceForm } from "@/components/invoice-generator/invoice-form";
-import { ArrowLeft, FileText } from "lucide-react";
+import { QuoteForm } from "@/components/quote-generator/quote-form";
+import { ArrowLeft, FileSignature } from "lucide-react";
 import Link from "next/link";
 
-export default function InvoiceGeneratorPage() {
+export default function QuoteGeneratorPage() {
   return (
     <main className="min-h-screen bg-gradient-to-b from-background to-muted p-4">
       <div className="max-w-6xl mx-auto py-8">
@@ -22,19 +21,17 @@ export default function InvoiceGeneratorPage() {
             </div>
             <Logo size="sm" className="mb-2" />
             <h1 className="text-2xl font-bold tracking-tight text-foreground flex items-center gap-2">
-              <FileText className="h-6 w-6 text-primary" />
-              Générateur de Factures
+              <FileSignature className="h-6 w-6 text-primary" />
+              Générateur de Devis
             </h1>
             <p className="text-muted-foreground mt-1">
-              Créez vos factures PDF en temps réel
+              Créez vos devis PDF en temps réel
             </p>
           </div>
           <LogoutButton />
         </div>
 
-        <Suspense fallback={<div className="flex items-center justify-center h-64 text-muted-foreground">Chargement...</div>}>
-          <InvoiceForm />
-        </Suspense>
+        <QuoteForm />
       </div>
     </main>
   );
