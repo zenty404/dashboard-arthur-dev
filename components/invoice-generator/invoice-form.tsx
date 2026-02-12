@@ -37,6 +37,22 @@ function getInitialData(searchParams: URLSearchParams): InvoiceData {
       // Invalid data param, fall through
     }
   }
+
+  const clientParam = searchParams.get("client");
+  if (clientParam) {
+    try {
+      const client = JSON.parse(atob(clientParam));
+      return {
+        ...DEFAULT_INVOICE,
+        clientName: client.clientName || "",
+        clientAddress: client.clientAddress || "",
+        clientCity: client.clientCity || "",
+      };
+    } catch {
+      // Invalid client param, fall through
+    }
+  }
+
   return DEFAULT_INVOICE;
 }
 

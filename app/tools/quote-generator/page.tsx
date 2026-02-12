@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import { Button } from "@/components/ui/button";
 import { LogoutButton } from "@/components/logout-button";
 import { Logo } from "@/components/logo";
@@ -31,7 +32,9 @@ export default function QuoteGeneratorPage() {
           <LogoutButton />
         </div>
 
-        <QuoteForm />
+        <Suspense fallback={<div className="flex items-center justify-center h-64 text-muted-foreground">Chargement...</div>}>
+          <QuoteForm />
+        </Suspense>
       </div>
     </main>
   );

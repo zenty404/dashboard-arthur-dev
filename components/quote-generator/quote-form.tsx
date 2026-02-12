@@ -13,7 +13,7 @@ import {
 import { InvoiceItem } from "@/lib/invoice-defaults";
 import { QuoteData, DEFAULT_QUOTE } from "@/lib/quote-defaults";
 import { Plus, Trash2, FileSignature, FileText } from "lucide-react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import dynamic from "next/dynamic";
 
 const QuotePreview = dynamic(
@@ -21,8 +21,27 @@ const QuotePreview = dynamic(
   { ssr: false, loading: () => <div className="flex items-center justify-center h-[600px] bg-muted rounded-lg">Chargement...</div> }
 );
 
+function getInitialData(searchParams: URLSearchParams): QuoteData {
+  const clientParam = searchParams.get("client");
+  if (clientParam) {
+    try {
+      const client = JSON.parse(atob(clientParam));
+      return {
+        ...DEFAULT_QUOTE,
+        clientName: client.clientName || "",
+        clientAddress: client.clientAddress || "",
+        clientCity: client.clientCity || "",
+      };
+    } catch {
+      // Invalid client param, fall through
+    }
+  }
+  return DEFAULT_QUOTE;
+}
+
 export function QuoteForm() {
-  const [data, setData] = useState<QuoteData>(DEFAULT_QUOTE);
+  const searchParams = useSearchParams();
+  const [data, setData] = useState<QuoteData>(() => getInitialData(searchParams));
   const router = useRouter();
 
   const updateField = <K extends keyof QuoteData>(

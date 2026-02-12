@@ -20,8 +20,9 @@ turso db shell saas-shortener "SQL"   # Execute SQL query
 # Shadcn UI
 npx shadcn@latest add <component>    # Add a Shadcn component
 
-# Vercel CLI
-vercel --prod --yes                   # Deploy to production
+# Deployment
+git push origin main                  # Triggers auto-deploy via Vercel (preferred)
+vercel --prod --yes                   # Manual deploy (may fail due to env var issues)
 vercel alias set <deployment> dashboard-arthur-dev.vercel.app  # Set alias
 ```
 
@@ -73,7 +74,7 @@ Multi-tool enterprise dashboard with authentication, built with Next.js 16 (App 
 
 **Prisma + Turso/libSQL.** `lib/prisma.ts` creates a singleton client using the `@prisma/adapter-libsql` adapter. `TURSO_DATABASE_URL` is required at runtime (throws if missing).
 
-**Models**: Link (with ClickEvent for individual click tracking), QrCode, User, MonitoredSite (with UptimeCheck for uptime monitoring). Schema is in `prisma/schema.prisma`.
+**Models**: Link (with ClickEvent for individual click tracking), QrCode, User, MonitoredSite (with UptimeCheck for uptime monitoring), Client. Schema is in `prisma/schema.prisma`.
 
 ### Authentication
 
@@ -100,6 +101,10 @@ Fully client-side tool — no `actions.ts` or server actions. PDF is rendered in
 ### Quote Generator
 
 Client-side PDF tool mirroring the Invoice Generator architecture. Types in `lib/quote-defaults.ts` (reuses `InvoiceItem` from invoice-defaults). Key differences from invoices: quote number prefixed `D-`, validity period in days, CONDITIONS section instead of payment info, and "Bon pour accord" signature zone on the PDF. "Convertir en facture" button serializes `QuoteData` as base64 JSON and redirects to `/tools/invoice-generator?data=...`, which maps `quoteNumber` → `invoiceNumber` (stripping the `D-` prefix).
+
+### Client Manager
+
+Server-side CRUD tool for managing clients/contacts. Stores clients in the database (name, email, phone, address, city, notes). Client cards include "Facture" and "Devis" buttons that navigate to the respective generators with `?client=<base64-json>` param to pre-fill client info (clientName, clientAddress, clientCity). Both invoice and quote forms read this param on load.
 
 ### Uptime Monitor
 

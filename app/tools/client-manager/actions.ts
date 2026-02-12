@@ -1,0 +1,84 @@
+"use server";
+
+import { prisma } from "@/lib/prisma";
+import { revalidatePath } from "next/cache";
+
+export type ActionResult =
+  | { success: true }
+  | { success: false; error: string };
+
+interface ClientData {
+  name: string;
+  email?: string;
+  phone?: string;
+  address?: string;
+  city?: string;
+  notes?: string;
+}
+
+export async function createClient(data: ClientData): Promise<ActionResult> {
+  if (!data.name || data.name.trim() === "") {
+    return { success: false, error: "Le nom est requis" };
+  }
+
+  try {
+    await prisma.client.create({
+      data: {
+        name: data.name.trim(),
+        email: data.email?.trim() || null,
+        phone: data.phone?.trim() || null,
+        address: data.address?.trim() || null,
+        city: data.city?.trim() || null,
+        notes: data.notes?.trim() || null,
+      },
+    });
+
+    revalidatePath("/tools/client-manager");
+    return { success: true };
+  } catch (error) {
+    console.error("Erreur lors de la création du client:", error);
+    return { success: false, error: "Erreur lors de la création du client" };
+  }
+}
+
+export async function updateClient(
+  id: string,
+  data: ClientData
+): Promise<ActionResult> {
+  if (!data.name || data.name.trim() === "") {
+    return { success: false, error: "Le nom est requis" };
+  }
+
+  try {
+    await prisma.client.update({
+      where: { id },
+      data: {
+        name: data.name.trim(),
+        email: data.email?.trim() || null,
+        phone: data.phone?.trim() || null,
+        address: data.address?.trim() || null,
+        city: data.city?.trim() || null,
+        notes: data.notes?.trim() || null,
+      },
+    });
+
+    revalidatePath("/tools/client-manager");
+    return { success: true };
+  } catch (error) {
+    console.error("Erreur lors de la modification du client:", error);
+    return { success: false, error: "Erreur lors de la modification du client" };
+  }
+}
+
+export async function deleteClient(id: string): Promise<ActionResult> {
+  try {
+    await prisma.client.delete({
+      where: { id },
+    });
+    revalidatePath("/tools/client-manager");
+    return { success: true };
+  } catch (error) {
+    console.error("Erreur lors de la suppression du client:", error);
+    return { success: false, error: "Erreur lors de la suppression du client" };
+  }
+}

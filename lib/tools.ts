@@ -1,4 +1,4 @@
-import { Link, QrCode, FileText, FileSignature, Activity, LucideIcon } from "lucide-react";
+import { Link, QrCode, FileText, FileSignature, Activity, Users, LucideIcon } from "lucide-react";
 
 export interface Tool {
   id: string;
@@ -49,5 +49,13 @@ export const tools: Tool[] = [
     icon: Activity,
     href: "/tools/uptime-monitor",
     color: "orange",
+  },
+  {
+    id: "client-manager",
+    name: "Clients",
+    description: "Gérer vos clients et contacts",
+    icon: Users,
+    href: "/tools/client-manager",
+    color: "blue",
   },
 ];
