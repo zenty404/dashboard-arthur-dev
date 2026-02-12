@@ -2,6 +2,7 @@
 
 import { prisma } from "@/lib/prisma";
 import { getCurrentUserId } from "@/lib/auth";
+import { checkQuota } from "@/lib/plans";
 import { nanoid } from "nanoid";
 import { revalidatePath } from "next/cache";
 
@@ -38,6 +39,13 @@ export async function createShortLink(
   try {
     const shortCode = nanoid(8);
     const userId = await getCurrentUserId();
+
+    if (userId) {
+      const quota = await checkQuota(userId, "links");
+      if (!quota.allowed) {
+        return { success: false, error: `Limite atteinte (${quota.current}/${quota.limit}). Passez Premium pour créer plus de liens.` };
+      }
+    }
 
     await prisma.link.create({
       data: {

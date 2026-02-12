@@ -1,12 +1,14 @@
 import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 import { getCurrentUserId, isAdmin } from "@/lib/auth";
+import { checkQuota } from "@/lib/plans";
 import { LogoutButton } from "@/components/logout-button";
 import { Button } from "@/components/ui/button";
 import { Logo } from "@/components/logo";
 import { SiteForm } from "@/components/uptime-monitor/site-form";
 import { SiteCard } from "@/components/uptime-monitor/site-card";
 import { AutoChecker } from "@/components/uptime-monitor/auto-checker";
+import { QuotaIndicator } from "@/components/quota-indicator";
 import { BarChart3, ArrowLeft, Activity } from "lucide-react";
 
 export const dynamic = "force-dynamic";
@@ -28,6 +30,8 @@ async function getSites() {
 
 export default async function UptimeMonitorPage() {
   const sites = await getSites();
+  const userId = await getCurrentUserId();
+  const quota = userId ? await checkQuota(userId, "sites") : null;
 
   return (
     <main className="min-h-screen bg-gradient-to-b from-background to-muted p-4">
@@ -68,6 +72,11 @@ export default async function UptimeMonitorPage() {
 
         <div className="mb-8">
           <SiteForm />
+          {quota && (
+            <div className="mt-4">
+              <QuotaIndicator current={quota.current} limit={quota.limit} resourceLabel="sites" />
+            </div>
+          )}
         </div>
 
         {sites.length === 0 ? (

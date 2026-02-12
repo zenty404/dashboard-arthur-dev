@@ -3,9 +3,17 @@ import { UrlShortenerForm } from "@/components/link-tracker/url-shortener-form";
 import { LogoutButton } from "@/components/logout-button";
 import { Button } from "@/components/ui/button";
 import { Logo } from "@/components/logo";
+import { QuotaIndicator } from "@/components/quota-indicator";
 import { BarChart3, ArrowLeft } from "lucide-react";
+import { getCurrentUserId } from "@/lib/auth";
+import { checkQuota } from "@/lib/plans";
 
-export default function LinkTrackerPage() {
+export const dynamic = "force-dynamic";
+
+export default async function LinkTrackerPage() {
+  const userId = await getCurrentUserId();
+  const quota = userId ? await checkQuota(userId, "links") : null;
+
   return (
     <main className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-b from-background to-muted p-4">
       <div className="absolute top-4 left-4">
@@ -26,6 +34,11 @@ export default function LinkTrackerPage() {
         </h1>
       </div>
       <UrlShortenerForm />
+      {quota && (
+        <div className="mt-4">
+          <QuotaIndicator current={quota.current} limit={quota.limit} resourceLabel="liens" />
+        </div>
+      )}
       <div className="mt-6">
         <Button variant="ghost" asChild>
           <Link href="/tools/link-tracker/stats" className="flex items-center gap-2">

@@ -2,8 +2,8 @@ import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import * as jose from "jose";
 
-const PUBLIC_PATHS = ["/login", "/setup", "/api", "/link-disabled"];
-const KNOWN_SEGMENTS = ["tools", "login", "setup", "link-disabled", "admin"];
+const PUBLIC_PATHS = ["/login", "/register", "/setup", "/api", "/link-disabled"];
+const KNOWN_SEGMENTS = ["tools", "login", "register", "setup", "link-disabled", "admin", "account"];
 
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;

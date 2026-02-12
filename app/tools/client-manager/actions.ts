@@ -2,6 +2,7 @@
 
 import { prisma } from "@/lib/prisma";
 import { getCurrentUserId } from "@/lib/auth";
+import { checkQuota } from "@/lib/plans";
 import { revalidatePath } from "next/cache";
 
 export type ActionResult =
@@ -24,6 +25,14 @@ export async function createClient(data: ClientData): Promise<ActionResult> {
 
   try {
     const userId = await getCurrentUserId();
+
+    if (userId) {
+      const quota = await checkQuota(userId, "clients");
+      if (!quota.allowed) {
+        return { success: false, error: `Limite atteinte (${quota.current}/${quota.limit}). Passez Premium pour gérer plus de clients.` };
+      }
+    }
+
     await prisma.client.create({
       data: {
         name: data.name.trim(),

@@ -1,10 +1,12 @@
 import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 import { getCurrentUserId, isAdmin } from "@/lib/auth";
+import { checkQuota } from "@/lib/plans";
 import { LogoutButton } from "@/components/logout-button";
 import { Button } from "@/components/ui/button";
 import { Logo } from "@/components/logo";
 import { ClientList } from "@/components/client-manager/client-list";
+import { QuotaIndicator } from "@/components/quota-indicator";
 import { ArrowLeft, Users } from "lucide-react";
 
 export const dynamic = "force-dynamic";
@@ -21,6 +23,8 @@ async function getClients() {
 
 export default async function ClientManagerPage() {
   const clients = await getClients();
+  const userId = await getCurrentUserId();
+  const quota = userId ? await checkQuota(userId, "clients") : null;
 
   return (
     <main className="min-h-screen bg-gradient-to-b from-background to-muted p-4">
@@ -47,6 +51,11 @@ export default async function ClientManagerPage() {
           <LogoutButton />
         </div>
 
+        {quota && (
+          <div className="mb-4">
+            <QuotaIndicator current={quota.current} limit={quota.limit} resourceLabel="clients" />
+          </div>
+        )}
         <ClientList clients={clients} />
       </div>
     </main>

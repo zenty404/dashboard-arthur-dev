@@ -5,8 +5,15 @@ import { Logo } from "@/components/logo";
 import { QuoteForm } from "@/components/quote-generator/quote-form";
 import { ArrowLeft, FileSignature } from "lucide-react";
 import Link from "next/link";
+import { getCurrentUserId } from "@/lib/auth";
+import { getUserPlan } from "@/lib/plans";
 
-export default function QuoteGeneratorPage() {
+export const dynamic = "force-dynamic";
+
+export default async function QuoteGeneratorPage() {
+  const userId = await getCurrentUserId();
+  const plan = userId ? await getUserPlan(userId) : "free";
+
   return (
     <main className="min-h-screen bg-gradient-to-b from-background to-muted p-4">
       <div className="max-w-6xl mx-auto py-8">
@@ -33,7 +40,7 @@ export default function QuoteGeneratorPage() {
         </div>
 
         <Suspense fallback={<div className="flex items-center justify-center h-64 text-muted-foreground">Chargement...</div>}>
-          <QuoteForm />
+          <QuoteForm plan={plan} />
         </Suspense>
       </div>
     </main>

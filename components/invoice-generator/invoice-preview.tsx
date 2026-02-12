@@ -8,18 +8,19 @@ import { Download } from "lucide-react";
 
 interface InvoicePreviewProps {
   data: InvoiceData;
+  showWatermark?: boolean;
 }
 
-export function InvoicePreview({ data }: InvoicePreviewProps) {
+export function InvoicePreview({ data, showWatermark = false }: InvoicePreviewProps) {
   return (
     <div className="space-y-4">
       <div className="border rounded-lg overflow-hidden bg-gray-100">
         <PDFViewer width="100%" height={600} showToolbar={false}>
-          <InvoicePDF data={data} />
+          <InvoicePDF data={data} showWatermark={showWatermark} />
         </PDFViewer>
       </div>
       <PDFDownloadLink
-        document={<InvoicePDF data={data} />}
+        document={<InvoicePDF data={data} showWatermark={showWatermark} />}
         fileName={`Facture-${data.invoiceNumber}.pdf`}
       >
         {({ loading }) => (

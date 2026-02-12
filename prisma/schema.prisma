@@ -30,15 +30,19 @@ model ClickEvent {
 }
 
 model User {
-  id             String          @id @default(cuid())
-  username       String          @unique
-  password       String
-  role           String          @default("user")
-  createdAt      DateTime        @default(now())
-  links          Link[]
-  qrCodes        QrCode[]
-  monitoredSites MonitoredSite[]
-  clients        Client[]
+  id                   String          @id @default(cuid())
+  username             String          @unique
+  password             String
+  role                 String          @default("user")
+  plan                 String          @default("free")
+  stripeCustomerId     String?
+  stripeSubscriptionId String?
+  planExpiresAt        DateTime?
+  createdAt            DateTime        @default(now())
+  links                Link[]
+  qrCodes              QrCode[]
+  monitoredSites       MonitoredSite[]
+  clients              Client[]
 }
 
 model QrCode {

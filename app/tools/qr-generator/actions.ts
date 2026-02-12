@@ -2,6 +2,7 @@
 
 import { prisma } from "@/lib/prisma";
 import { getCurrentUserId } from "@/lib/auth";
+import { checkQuota } from "@/lib/plans";
 import { revalidatePath } from "next/cache";
 import QRCode from "qrcode";
 
@@ -16,6 +17,14 @@ export async function createQrCode(formData: FormData) {
 
   try {
     const userId = await getCurrentUserId();
+
+    if (userId) {
+      const quota = await checkQuota(userId, "qrCodes");
+      if (!quota.allowed) {
+        return { error: `Limite atteinte (${quota.current}/${quota.limit}). Passez Premium pour créer plus de QR codes.` };
+      }
+    }
+
     const qrCode = await prisma.qrCode.create({
       data: {
         content,

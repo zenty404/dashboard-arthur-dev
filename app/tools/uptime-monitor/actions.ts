@@ -2,6 +2,7 @@
 
 import { prisma } from "@/lib/prisma";
 import { getCurrentUserId } from "@/lib/auth";
+import { checkQuota } from "@/lib/plans";
 import { performCheck } from "@/lib/uptime";
 import { revalidatePath } from "next/cache";
 
@@ -39,6 +40,14 @@ export async function addSite(
 
   try {
     const userId = await getCurrentUserId();
+
+    if (userId) {
+      const quota = await checkQuota(userId, "sites");
+      if (!quota.allowed) {
+        return { success: false, error: `Limite atteinte (${quota.current}/${quota.limit}). Passez Premium pour surveiller plus de sites.` };
+      }
+    }
+
     await prisma.monitoredSite.create({
       data: {
         url: trimmedUrl,

@@ -39,7 +39,11 @@ function getInitialData(searchParams: URLSearchParams): QuoteData {
   return DEFAULT_QUOTE;
 }
 
-export function QuoteForm() {
+interface QuoteFormProps {
+  plan?: string;
+}
+
+export function QuoteForm({ plan = "free" }: QuoteFormProps) {
   const searchParams = useSearchParams();
   const [data, setData] = useState<QuoteData>(() => getInitialData(searchParams));
   const router = useRouter();
@@ -337,7 +341,7 @@ export function QuoteForm() {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <QuotePreview data={data} />
+            <QuotePreview data={data} showWatermark={plan === "free"} />
           </CardContent>
         </Card>
       </div>

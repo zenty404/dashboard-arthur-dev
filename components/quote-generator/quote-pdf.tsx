@@ -201,9 +201,10 @@ const styles = StyleSheet.create({
 
 interface QuotePDFProps {
   data: QuoteData;
+  showWatermark?: boolean;
 }
 
-export function QuotePDF({ data }: QuotePDFProps) {
+export function QuotePDF({ data, showWatermark = false }: QuotePDFProps) {
   const totalHT = data.items.reduce(
     (sum, item) => sum + item.quantity * item.unitPrice,
     0
@@ -338,6 +339,26 @@ export function QuotePDF({ data }: QuotePDFProps) {
             <Text style={styles.signatureLabel}>Signature du client :</Text>
           </View>
         </View>
+
+        {/* Watermark */}
+        {showWatermark && (
+          <Text
+            style={{
+              position: "absolute",
+              top: "45%",
+              left: 0,
+              right: 0,
+              textAlign: "center",
+              fontSize: 40,
+              color: "#e0e0e0",
+              opacity: 0.4,
+              transform: "rotate(-30deg)",
+              fontFamily: "Helvetica-Bold",
+            }}
+          >
+            Version gratuite
+          </Text>
+        )}
 
         {/* Footer */}
         <Text style={styles.footer}>

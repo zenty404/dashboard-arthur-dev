@@ -71,6 +71,50 @@ export async function createAdminUser(
   return { success: true };
 }
 
+export async function register(
+  username: string,
+  password: string
+): Promise<AuthResult> {
+  if (!username || !password) {
+    return { success: false, error: "Identifiant et mot de passe requis" };
+  }
+
+  if (username.trim().length < 3) {
+    return { success: false, error: "L'identifiant doit contenir au moins 3 caractères" };
+  }
+
+  if (password.length < 8) {
+    return { success: false, error: "Le mot de passe doit contenir au moins 8 caractères" };
+  }
+
+  const existing = await prisma.user.findUnique({
+    where: { username: username.trim() },
+  });
+
+  if (existing) {
+    return { success: false, error: "Cet identifiant est déjà utilisé" };
+  }
+
+  try {
+    const hashedPassword = await hashPassword(password);
+    const user = await prisma.user.create({
+      data: {
+        username: username.trim(),
+        password: hashedPassword,
+        role: "user",
+        plan: "free",
+      },
+    });
+
+    const token = generateToken(user.id, user.role);
+    await setAuthCookie(token);
+
+    return { success: true };
+  } catch {
+    return { success: false, error: "Erreur lors de la création du compte" };
+  }
+}
+
 export async function hasAdmin(): Promise<boolean> {
   const user = await prisma.user.findFirst();
   return !!user;

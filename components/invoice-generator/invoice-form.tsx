@@ -56,7 +56,11 @@ function getInitialData(searchParams: URLSearchParams): InvoiceData {
   return DEFAULT_INVOICE;
 }
 
-export function InvoiceForm() {
+interface InvoiceFormProps {
+  plan?: string;
+}
+
+export function InvoiceForm({ plan = "free" }: InvoiceFormProps) {
   const searchParams = useSearchParams();
   const [data, setData] = useState<InvoiceData>(() => getInitialData(searchParams));
 
@@ -328,7 +332,7 @@ export function InvoiceForm() {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <InvoicePreview data={data} />
+            <InvoicePreview data={data} showWatermark={plan === "free"} />
           </CardContent>
         </Card>
       </div>

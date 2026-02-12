@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { login } from "@/app/actions/auth";
+import { register } from "@/app/actions/auth";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -12,10 +12,10 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Lock, Loader2 } from "lucide-react";
+import { UserPlus, Loader2 } from "lucide-react";
 import Link from "next/link";
 
-export function LoginForm() {
+export function RegisterForm() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
@@ -27,7 +27,7 @@ export function LoginForm() {
     setError(null);
     setIsLoading(true);
 
-    const result = await login(username, password);
+    const result = await register(username, password);
 
     setIsLoading(false);
 
@@ -43,11 +43,11 @@ export function LoginForm() {
     <Card className="w-full max-w-md">
       <CardHeader className="text-center">
         <CardTitle className="flex items-center justify-center gap-2 text-2xl">
-          <Lock className="h-6 w-6" />
-          Connexion
+          <UserPlus className="h-6 w-6" />
+          Créer un compte
         </CardTitle>
         <CardDescription>
-          Connectez-vous à votre espace
+          Inscrivez-vous gratuitement
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -64,7 +64,7 @@ export function LoginForm() {
           <div className="space-y-2">
             <Input
               type="password"
-              placeholder="Mot de passe"
+              placeholder="Mot de passe (8 caractères min.)"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
@@ -79,14 +79,14 @@ export function LoginForm() {
             {isLoading ? (
               <Loader2 className="h-4 w-4 animate-spin" />
             ) : (
-              "Se connecter"
+              "S'inscrire"
             )}
           </Button>
 
           <p className="text-sm text-center text-muted-foreground">
-            Pas encore de compte ?{" "}
-            <Link href="/register" className="text-primary hover:underline">
-              Créer un compte
+            Déjà un compte ?{" "}
+            <Link href="/login" className="text-primary hover:underline">
+              Se connecter
             </Link>
           </p>
         </form>

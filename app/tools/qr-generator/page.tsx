@@ -2,10 +2,18 @@ import { Button } from "@/components/ui/button";
 import { LogoutButton } from "@/components/logout-button";
 import { Logo } from "@/components/logo";
 import { QrForm } from "@/components/qr-generator/qr-form";
+import { QuotaIndicator } from "@/components/quota-indicator";
 import { ArrowLeft, History } from "lucide-react";
 import Link from "next/link";
+import { getCurrentUserId } from "@/lib/auth";
+import { checkQuota } from "@/lib/plans";
 
-export default function QrGeneratorPage() {
+export const dynamic = "force-dynamic";
+
+export default async function QrGeneratorPage() {
+  const userId = await getCurrentUserId();
+  const quota = userId ? await checkQuota(userId, "qrCodes") : null;
+
   return (
     <main className="min-h-screen bg-gradient-to-b from-background to-muted p-4">
       <div className="max-w-4xl mx-auto py-8">
@@ -39,6 +47,11 @@ export default function QrGeneratorPage() {
         </div>
 
         <QrForm />
+        {quota && (
+          <div className="mt-4">
+            <QuotaIndicator current={quota.current} limit={quota.limit} resourceLabel="QR codes" />
+          </div>
+        )}
       </div>
     </main>
   );

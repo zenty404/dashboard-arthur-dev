@@ -3,9 +3,18 @@ import { Logo } from "@/components/logo";
 import { ToolCard } from "@/components/dashboard/tool-card";
 import { tools, Tool } from "@/lib/tools";
 import { isAdmin } from "@/lib/auth";
-import { Shield } from "lucide-react";
+import { Shield, CreditCard } from "lucide-react";
 
 export const dynamic = "force-dynamic";
+
+const accountTool: Tool = {
+  id: "account",
+  name: "Mon compte",
+  description: "Abonnement et paramètres du compte",
+  icon: CreditCard,
+  href: "/account",
+  color: "green",
+};
 
 const adminTool: Tool = {
   id: "admin",
@@ -39,6 +48,7 @@ export default async function DashboardPage() {
           {tools.map((tool) => (
             <ToolCard key={tool.id} tool={tool} />
           ))}
+          <ToolCard tool={accountTool} />
           {admin && <ToolCard tool={adminTool} />}
         </div>
       </div>

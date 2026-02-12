@@ -5,8 +5,15 @@ import { Logo } from "@/components/logo";
 import { InvoiceForm } from "@/components/invoice-generator/invoice-form";
 import { ArrowLeft, FileText } from "lucide-react";
 import Link from "next/link";
+import { getCurrentUserId } from "@/lib/auth";
+import { getUserPlan } from "@/lib/plans";
 
-export default function InvoiceGeneratorPage() {
+export const dynamic = "force-dynamic";
+
+export default async function InvoiceGeneratorPage() {
+  const userId = await getCurrentUserId();
+  const plan = userId ? await getUserPlan(userId) : "free";
+
   return (
     <main className="min-h-screen bg-gradient-to-b from-background to-muted p-4">
       <div className="max-w-6xl mx-auto py-8">
@@ -33,7 +40,7 @@ export default function InvoiceGeneratorPage() {
         </div>
 
         <Suspense fallback={<div className="flex items-center justify-center h-64 text-muted-foreground">Chargement...</div>}>
-          <InvoiceForm />
+          <InvoiceForm plan={plan} />
         </Suspense>
       </div>
     </main>
