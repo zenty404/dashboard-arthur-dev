@@ -1,6 +1,7 @@
 "use server";
 
 import { prisma } from "@/lib/prisma";
+import { getCurrentUserId } from "@/lib/auth";
 import { revalidatePath } from "next/cache";
 import QRCode from "qrcode";
 
@@ -14,11 +15,13 @@ export async function createQrCode(formData: FormData) {
   }
 
   try {
+    const userId = await getCurrentUserId();
     const qrCode = await prisma.qrCode.create({
       data: {
         content,
         label: label || null,
         size,
+        userId,
       },
     });
 

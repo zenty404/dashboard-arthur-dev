@@ -1,6 +1,7 @@
 "use server";
 
 import { prisma } from "@/lib/prisma";
+import { getCurrentUserId } from "@/lib/auth";
 import { revalidatePath } from "next/cache";
 
 export type ActionResult =
@@ -22,6 +23,7 @@ export async function createClient(data: ClientData): Promise<ActionResult> {
   }
 
   try {
+    const userId = await getCurrentUserId();
     await prisma.client.create({
       data: {
         name: data.name.trim(),
@@ -30,6 +32,7 @@ export async function createClient(data: ClientData): Promise<ActionResult> {
         address: data.address?.trim() || null,
         city: data.city?.trim() || null,
         notes: data.notes?.trim() || null,
+        userId,
       },
     });
 

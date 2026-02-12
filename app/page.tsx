@@ -1,9 +1,24 @@
 import { LogoutButton } from "@/components/logout-button";
 import { Logo } from "@/components/logo";
 import { ToolCard } from "@/components/dashboard/tool-card";
-import { tools } from "@/lib/tools";
+import { tools, Tool } from "@/lib/tools";
+import { isAdmin } from "@/lib/auth";
+import { Shield } from "lucide-react";
 
-export default function DashboardPage() {
+export const dynamic = "force-dynamic";
+
+const adminTool: Tool = {
+  id: "admin",
+  name: "Administration",
+  description: "Gestion des utilisateurs et supervision",
+  icon: Shield,
+  href: "/admin",
+  color: "red",
+};
+
+export default async function DashboardPage() {
+  const admin = await isAdmin();
+
   return (
     <main className="min-h-screen bg-gradient-to-b from-background to-muted">
       <div className="max-w-4xl mx-auto py-8 px-4">
@@ -24,6 +39,7 @@ export default function DashboardPage() {
           {tools.map((tool) => (
             <ToolCard key={tool.id} tool={tool} />
           ))}
+          {admin && <ToolCard tool={adminTool} />}
         </div>
       </div>
     </main>

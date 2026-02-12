@@ -17,6 +17,8 @@ model Link {
   clicks      Int          @default(0)
   isActive    Boolean      @default(true)
   createdAt   DateTime     @default(now())
+  userId      String?
+  user        User?        @relation(fields: [userId], references: [id])
   clickEvents ClickEvent[]
 }
 
@@ -28,10 +30,15 @@ model ClickEvent {
 }
 
 model User {
-  id        String   @id @default(cuid())
-  username  String   @unique
-  password  String
-  createdAt DateTime @default(now())
+  id             String          @id @default(cuid())
+  username       String          @unique
+  password       String
+  role           String          @default("user")
+  createdAt      DateTime        @default(now())
+  links          Link[]
+  qrCodes        QrCode[]
+  monitoredSites MonitoredSite[]
+  clients        Client[]
 }
 
 model QrCode {
@@ -41,6 +48,8 @@ model QrCode {
   size      Int      @default(256)
   scans     Int      @default(0)
   createdAt DateTime @default(now())
+  userId    String?
+  user      User?    @relation(fields: [userId], references: [id])
 }
 
 model MonitoredSite {
@@ -49,6 +58,8 @@ model MonitoredSite {
   label        String?
   isActive     Boolean       @default(true)
   createdAt    DateTime      @default(now())
+  userId       String?
+  user         User?         @relation(fields: [userId], references: [id])
   uptimeChecks UptimeCheck[]
 }
 
@@ -72,4 +83,6 @@ model Client {
   city      String?
   notes     String?
   createdAt DateTime @default(now())
+  userId    String?
+  user      User?    @relation(fields: [userId], references: [id])
 }

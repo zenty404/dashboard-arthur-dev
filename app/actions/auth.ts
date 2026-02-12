@@ -35,7 +35,7 @@ export async function login(
     return { success: false, error: "Identifiants incorrects" };
   }
 
-  const token = generateToken(user.id);
+  const token = generateToken(user.id, user.role);
   await setAuthCookie(token);
 
   return { success: true };
@@ -64,6 +64,7 @@ export async function createAdminUser(
     data: {
       username,
       password: hashedPassword,
+      role: "admin",
     },
   });
 

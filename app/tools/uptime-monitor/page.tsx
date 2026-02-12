@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { prisma } from "@/lib/prisma";
+import { getCurrentUserId, isAdmin } from "@/lib/auth";
 import { LogoutButton } from "@/components/logout-button";
 import { Button } from "@/components/ui/button";
 import { Logo } from "@/components/logo";
@@ -11,7 +12,10 @@ import { BarChart3, ArrowLeft, Activity } from "lucide-react";
 export const dynamic = "force-dynamic";
 
 async function getSites() {
+  const admin = await isAdmin();
+  const userId = await getCurrentUserId();
   return prisma.monitoredSite.findMany({
+    where: admin ? {} : { userId },
     orderBy: { createdAt: "desc" },
     include: {
       uptimeChecks: {

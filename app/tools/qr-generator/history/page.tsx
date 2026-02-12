@@ -1,4 +1,5 @@
 import { prisma } from "@/lib/prisma";
+import { getCurrentUserId, isAdmin } from "@/lib/auth";
 import {
   Card,
   CardContent,
@@ -25,7 +26,10 @@ import QRCode from "qrcode";
 export const dynamic = "force-dynamic";
 
 async function getQrCodes() {
+  const admin = await isAdmin();
+  const userId = await getCurrentUserId();
   return prisma.qrCode.findMany({
+    where: admin ? {} : { userId },
     orderBy: { createdAt: "desc" },
   });
 }

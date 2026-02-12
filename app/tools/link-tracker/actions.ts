@@ -1,6 +1,7 @@
 "use server";
 
 import { prisma } from "@/lib/prisma";
+import { getCurrentUserId } from "@/lib/auth";
 import { nanoid } from "nanoid";
 import { revalidatePath } from "next/cache";
 
@@ -36,11 +37,13 @@ export async function createShortLink(
 
   try {
     const shortCode = nanoid(8);
+    const userId = await getCurrentUserId();
 
     await prisma.link.create({
       data: {
         originalUrl: trimmedUrl,
         shortCode,
+        userId,
       },
     });
 

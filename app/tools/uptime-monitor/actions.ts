@@ -1,6 +1,7 @@
 "use server";
 
 import { prisma } from "@/lib/prisma";
+import { getCurrentUserId } from "@/lib/auth";
 import { performCheck } from "@/lib/uptime";
 import { revalidatePath } from "next/cache";
 
@@ -37,10 +38,12 @@ export async function addSite(
   }
 
   try {
+    const userId = await getCurrentUserId();
     await prisma.monitoredSite.create({
       data: {
         url: trimmedUrl,
         label: trimmedLabel,
+        userId,
       },
     });
 
