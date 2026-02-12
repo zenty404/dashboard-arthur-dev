@@ -1,36 +1,58 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Dashboard Arthur Dev
 
-## Getting Started
+Dashboard tout-en-un pour freelances et petites entreprises. Centralisez vos outils de gestion quotidiens dans une seule interface moderne et rapide.
 
-First, run the development server:
+## Fonctionnalités
+
+- **Link Tracker** — Raccourcisseur d'URL avec suivi des clics et statistiques
+- **QR Generator** — Création de QR codes avec compteur de scans
+- **Factures** — Génération de factures PDF professionnelles
+- **Devis** — Génération de devis PDF avec conversion en facture en un clic
+- **Gestion Clients** — Carnet de contacts avec pré-remplissage automatique des factures et devis
+- **Moniteur de Sites** — Surveillance de la disponibilité de vos sites web avec historique
+
+## Stack technique
+
+- **Framework** : Next.js 16 (App Router) + React 19
+- **Base de données** : Turso (libSQL) via Prisma 7
+- **UI** : Tailwind CSS 4 + Shadcn UI
+- **PDF** : @react-pdf/renderer (génération côté client)
+- **Déploiement** : Vercel
+
+## Démarrage rapide
 
 ```bash
+# Installation
+npm install
+
+# Configuration
+cp .env.example .env
+# Renseigner les variables d'environnement (voir ci-dessous)
+
+# Lancer le serveur de développement
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Ouvrir [http://localhost:3000](http://localhost:3000) — la page `/setup` permet de créer le premier compte administrateur.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Variables d'environnement
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+| Variable | Description |
+|---|---|
+| `DATABASE_URL` | Chemin SQLite local (ex: `file:./dev.db`) |
+| `TURSO_DATABASE_URL` | URL de la base Turso |
+| `TURSO_AUTH_TOKEN` | Token d'authentification Turso |
+| `JWT_SECRET` | Secret pour la signature des JWT |
+| `CRON_SECRET` | Token protégeant l'endpoint cron (production) |
 
-## Learn More
+## Scripts
 
-To learn more about Next.js, take a look at the following resources:
+```bash
+npm run dev      # Serveur de développement
+npm run build    # Build de production
+npm run lint     # Linting ESLint
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Licence
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Propriétaire — Tous droits réservés.

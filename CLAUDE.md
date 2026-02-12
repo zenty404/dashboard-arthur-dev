@@ -112,7 +112,7 @@ Dark midnight navy theme defined via CSS custom properties in `app/globals.css` 
 
 ### Link Tracker
 
-URL shortener with click analytics. Creates short codes via `nanoid` (6 chars). `app/[shortCode]/route.ts` handles public redirects — atomically increments click count and creates a `ClickEvent` record using `prisma.$transaction()`. Stats sub-page at `/tools/link-tracker/stats`. Links can be deactivated (redirects to `/link-disabled`).
+URL shortener with click analytics. Creates short codes via `nanoid` (8 chars). `app/[shortCode]/route.ts` handles public redirects — atomically increments click count and creates a `ClickEvent` record using `prisma.$transaction()`. Stats sub-page at `/tools/link-tracker/stats`. Links can be deactivated (redirects to `/link-disabled`).
 
 ### QR Generator
 
