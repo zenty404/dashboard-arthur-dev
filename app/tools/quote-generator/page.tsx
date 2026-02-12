@@ -26,7 +26,7 @@ export default function QuoteGeneratorPage() {
               Générateur de Devis
             </h1>
             <p className="text-muted-foreground mt-1">
-              Créez vos devis PDF en temps réel
+              Création et export de devis PDF
             </p>
           </div>
           <LogoutButton />

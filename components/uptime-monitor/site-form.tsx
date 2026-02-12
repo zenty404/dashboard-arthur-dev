@@ -70,7 +70,7 @@ export function SiteForm() {
           </label>
           <Input
             id="label"
-            placeholder="Mon site web"
+            placeholder="Site principal"
             value={label}
             onChange={(e) => setLabel(e.target.value)}
           />

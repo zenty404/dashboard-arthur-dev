@@ -54,7 +54,7 @@ export function ToolCard({ tool }: ToolCardProps) {
         </CardHeader>
         <CardContent>
           <span className="text-sm text-primary font-medium">
-            Ouvrir l&apos;outil
+            Accéder
           </span>
         </CardContent>
       </Card>

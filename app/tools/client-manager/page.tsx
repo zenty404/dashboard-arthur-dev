@@ -37,7 +37,7 @@ export default async function ClientManagerPage() {
               Clients
             </h1>
             <p className="text-muted-foreground mt-1">
-              Gérer vos clients et contacts
+              Gestion de la base clients et contacts
             </p>
           </div>
           <LogoutButton />

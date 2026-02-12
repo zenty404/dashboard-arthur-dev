@@ -26,7 +26,7 @@ export default function InvoiceGeneratorPage() {
               Générateur de Factures
             </h1>
             <p className="text-muted-foreground mt-1">
-              Créez vos factures PDF en temps réel
+              Création et export de factures PDF
             </p>
           </div>
           <LogoutButton />

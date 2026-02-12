@@ -183,7 +183,7 @@ export function ClientForm({ editingClient, onCancel, onSaved }: ClientFormProps
           </label>
           <Input
             id="notes"
-            placeholder="Notes internes..."
+            placeholder="Informations complémentaires..."
             value={notes}
             onChange={(e) => setNotes(e.target.value)}
           />

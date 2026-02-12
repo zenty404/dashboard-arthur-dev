@@ -11,10 +11,10 @@ export default function DashboardPage() {
           <div>
             <Logo size="lg" className="mb-2" />
             <h1 className="text-2xl font-bold tracking-tight text-foreground">
-              Dashboard
+              Tableau de bord
             </h1>
             <p className="text-muted-foreground mt-1">
-              Sélectionnez un outil pour commencer
+              Accédez à vos outils de gestion
             </p>
           </div>
           <LogoutButton />

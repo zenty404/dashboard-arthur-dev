@@ -13,7 +13,7 @@ export const tools: Tool[] = [
   {
     id: "link-tracker",
     name: "Link Tracker",
-    description: "Créer et suivre des liens raccourcis",
+    description: "Raccourcissement d'URLs et suivi des clics",
     icon: Link,
     href: "/tools/link-tracker",
     color: "blue",
@@ -21,7 +21,7 @@ export const tools: Tool[] = [
   {
     id: "qr-generator",
     name: "QR Generator",
-    description: "Générer et gérer des QR codes",
+    description: "Création et gestion de QR codes",
     icon: QrCode,
     href: "/tools/qr-generator",
     color: "purple",
@@ -29,7 +29,7 @@ export const tools: Tool[] = [
   {
     id: "invoice-generator",
     name: "Factures",
-    description: "Générer des factures PDF",
+    description: "Création et export de factures PDF",
     icon: FileText,
     href: "/tools/invoice-generator",
     color: "green",
@@ -37,7 +37,7 @@ export const tools: Tool[] = [
   {
     id: "quote-generator",
     name: "Devis",
-    description: "Générer des devis PDF professionnels",
+    description: "Création et export de devis PDF",
     icon: FileSignature,
     href: "/tools/quote-generator",
     color: "green",
@@ -45,7 +45,7 @@ export const tools: Tool[] = [
   {
     id: "uptime-monitor",
     name: "Moniteur de Sites",
-    description: "Surveiller la disponibilité de vos sites web",
+    description: "Surveillance et monitoring de disponibilité",
     icon: Activity,
     href: "/tools/uptime-monitor",
     color: "orange",
@@ -53,7 +53,7 @@ export const tools: Tool[] = [
   {
     id: "client-manager",
     name: "Clients",
-    description: "Gérer vos clients et contacts",
+    description: "Gestion de la base clients et contacts",
     icon: Users,
     href: "/tools/client-manager",
     color: "blue",

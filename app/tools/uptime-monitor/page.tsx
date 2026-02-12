@@ -45,7 +45,7 @@ export default async function UptimeMonitorPage() {
               Moniteur de Sites
             </h1>
             <p className="text-muted-foreground mt-1">
-              Surveiller la disponibilité de vos sites web
+              Surveillance et monitoring de disponibilité
             </p>
           </div>
           <div className="flex items-center gap-2">

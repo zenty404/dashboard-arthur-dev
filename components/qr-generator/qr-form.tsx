@@ -98,7 +98,7 @@ export function QrForm() {
             </label>
             <Input
               id="label"
-              placeholder="Mon QR code"
+              placeholder="Nom du QR code"
               value={label}
               onChange={(e) => setLabel(e.target.value)}
             />
@@ -150,7 +150,7 @@ export function QrForm() {
         <CardHeader>
           <CardTitle>Aperçu</CardTitle>
           <CardDescription>
-            Votre QR code généré
+            QR code généré
           </CardDescription>
         </CardHeader>
         <CardContent className="flex flex-col items-center justify-center min-h-[300px]">

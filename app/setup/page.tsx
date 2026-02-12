@@ -19,7 +19,7 @@ export default async function SetupPage() {
           Configuration
         </h1>
         <p className="text-muted-foreground">
-          Première connexion
+          Configuration de votre espace
         </p>
       </div>
       <SetupForm />

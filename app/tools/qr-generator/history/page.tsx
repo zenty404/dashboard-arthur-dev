@@ -69,7 +69,7 @@ export default async function QrHistoryPage() {
               Historique QR Codes
             </h1>
             <p className="text-muted-foreground mt-1">
-              Tous vos QR codes sauvegardés
+              QR codes sauvegardés
             </p>
           </div>
           <div className="flex items-center gap-2">
@@ -98,7 +98,7 @@ export default async function QrHistoryPage() {
           <CardHeader>
             <CardTitle>Tous les QR codes</CardTitle>
             <CardDescription>
-              Historique de vos QR codes générés
+              Historique des QR codes générés
             </CardDescription>
           </CardHeader>
           <CardContent>

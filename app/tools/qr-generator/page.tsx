@@ -24,7 +24,7 @@ export default function QrGeneratorPage() {
               QR Generator
             </h1>
             <p className="text-muted-foreground mt-1">
-              Générez des QR codes pour vos URLs et textes
+              Création et gestion de QR codes
             </p>
           </div>
           <div className="flex items-center gap-2">

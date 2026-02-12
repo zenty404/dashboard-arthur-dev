@@ -46,7 +46,7 @@ export function LoginForm() {
           Connexion
         </CardTitle>
         <CardDescription>
-          Accès à l&apos;outil interne
+          Connectez-vous à votre espace
         </CardDescription>
       </CardHeader>
       <CardContent>
