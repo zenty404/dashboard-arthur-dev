@@ -15,8 +15,8 @@ npx prisma generate                   # Regenerate Prisma client
 npx prisma db push                    # Push schema changes to local SQLite
 
 # Turso CLI (production database)
-turso db shell saas-shortener         # Open SQL shell
-turso db shell saas-shortener "SQL"   # Execute SQL query
+turso db shell dashboard-arthur-dev         # Open SQL shell
+turso db shell dashboard-arthur-dev "SQL"   # Execute SQL query
 
 # Shadcn UI
 npx shadcn@latest add <component>    # Add a Shadcn component
