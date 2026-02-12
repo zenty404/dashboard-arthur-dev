@@ -7,7 +7,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ```bash
 npm run dev      # Start development server (http://localhost:3000)
 npm run build    # Build for production (includes prisma generate)
-npm run lint     # Run ESLint
+npm start        # Run the built production app locally
+npm run lint     # Run ESLint (flat config in eslint.config.mjs)
 
 # Prisma commands (local development)
 npx prisma generate                   # Regenerate Prisma client
@@ -83,16 +84,39 @@ Multi-tool enterprise dashboard with authentication, built with Next.js 16 (App 
 - `/setup` creates the first admin user (only works when no users exist)
 - Password hashing: bcryptjs with 12 salt rounds
 
+### Server Actions Pattern
+
+Tools with database writes use `actions.ts` files following a standard pattern:
+- `"use server"` directive at the top
+- `ActionResult` union type: `{ success: true } | { success: false; error: string }`
+- Input validation with early return on failure (French error messages)
+- `prisma.*` calls wrapped in try/catch
+- `revalidatePath("/tools/[tool-name]")` after every mutation to bust Next.js cache
+- `useTransition` on the client side for pending states
+
+**Server-side tools** (with `actions.ts`): Link Tracker, QR Generator, Uptime Monitor, Client Manager.
+**Client-side tools** (no server actions, state-only): Invoice Generator, Quote Generator.
+
 ### Adding New Tools
 
 1. Add tool config to `lib/tools.ts` (implements `Tool` interface with id, name, description, icon, href, color). Available colors: `blue`, `green`, `purple`, `orange`, `red`.
 2. Create `app/tools/[tool-name]/page.tsx` (and `actions.ts` for Server Actions)
 3. Create `components/[tool-name]/` for tool-specific components
 4. Add any new Prisma models to `prisma/schema.prisma` and run `npx prisma db push` + update Turso
+5. For server-side tools: page uses `export const dynamic = "force-dynamic"`, fetches data, serializes dates via `JSON.parse(JSON.stringify(...))`, passes to a client component
+6. For client-side tools using `useSearchParams`: wrap in `<Suspense>` in the page
 
 ### Theme
 
 Dark midnight navy theme defined via CSS custom properties in `app/globals.css` using Tailwind v4 `@theme inline`. Primary color is cyan blue (`#0ea5e9`), background is dark navy (`#0c1526`).
+
+### Link Tracker
+
+URL shortener with click analytics. Creates short codes via `nanoid` (6 chars). `app/[shortCode]/route.ts` handles public redirects — atomically increments click count and creates a `ClickEvent` record using `prisma.$transaction()`. Stats sub-page at `/tools/link-tracker/stats`. Links can be deactivated (redirects to `/link-disabled`).
+
+### QR Generator
+
+QR code creation tool with scan tracking. Stores QR metadata in DB (content, label, size, scan count). History sub-page at `/tools/qr-generator/history`. QR rendering is client-side.
 
 ### Invoice Generator
 
@@ -105,6 +129,12 @@ Client-side PDF tool mirroring the Invoice Generator architecture. Types in `lib
 ### Client Manager
 
 Server-side CRUD tool for managing clients/contacts. Stores clients in the database (name, email, phone, address, city, notes). Client cards include "Facture" and "Devis" buttons that navigate to the respective generators with `?client=<base64-json>` param to pre-fill client info (clientName, clientAddress, clientCity). Both invoice and quote forms read this param on load.
+
+### Cross-Tool Pre-Fill
+
+Tools communicate via base64-encoded JSON URL params:
+- `?data=<base64>` — Quote-to-invoice conversion (full QuoteData payload)
+- `?client=<base64>` — Client Manager to invoice/quote (clientName, clientAddress, clientCity)
 
 ### Uptime Monitor
 
