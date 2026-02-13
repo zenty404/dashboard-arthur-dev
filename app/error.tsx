@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { AlertTriangle, RotateCcw } from "lucide-react";
 
 export default function GlobalError({
+  error,
   reset,
 }: {
   error: Error & { digest?: string };
@@ -17,6 +18,10 @@ export default function GlobalError({
         <p className="text-muted-foreground text-sm">
           Le chargement de la page a rencontré un problème. Veuillez
           rafraichir la page.
+        </p>
+        <p className="text-xs text-muted-foreground/60 font-mono break-all">
+          {error?.message || "Erreur inconnue"}
+          {error?.digest && ` (${error.digest})`}
         </p>
         <div className="flex gap-2 justify-center">
           <Button onClick={reset}>
