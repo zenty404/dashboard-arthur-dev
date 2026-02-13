@@ -7,8 +7,8 @@ import {
   View,
   StyleSheet,
 } from "@react-pdf/renderer";
-import { EMITTER, BANK_DETAILS } from "@/lib/invoice-defaults";
 import { QuoteData } from "@/lib/quote-defaults";
+import { EmitterSettings } from "@/lib/emitter-settings";
 
 const styles = StyleSheet.create({
   page: {
@@ -202,13 +202,19 @@ const styles = StyleSheet.create({
 interface QuotePDFProps {
   data: QuoteData;
   showWatermark?: boolean;
+  emitterSettings: EmitterSettings;
 }
 
-export function QuotePDF({ data, showWatermark = false }: QuotePDFProps) {
+export function QuotePDF({ data, showWatermark = false, emitterSettings }: QuotePDFProps) {
   const totalHT = data.items.reduce(
     (sum, item) => sum + item.quantity * item.unitPrice,
     0
   );
+
+  const tvaAmount = emitterSettings.tvaApplicable
+    ? Math.round(totalHT * emitterSettings.tvaRate / 100 * 100) / 100
+    : 0;
+  const totalTTC = totalHT + tvaAmount;
 
   const formatCurrency = (amount: number) =>
     amount.toLocaleString("fr-FR", {
@@ -223,14 +229,27 @@ export function QuotePDF({ data, showWatermark = false }: QuotePDFProps) {
         <View style={styles.header}>
           <View style={styles.emitterSection}>
             <Text style={styles.sectionTitle}>Émetteur</Text>
-            <Text style={styles.emitterName}>{EMITTER.name}</Text>
-            <Text style={styles.text}>{EMITTER.address}</Text>
-            <Text style={styles.text}>{EMITTER.city}</Text>
-            <Text style={styles.text}>Tél : {EMITTER.phone}</Text>
-            <Text style={styles.text}>Email : {EMITTER.email}</Text>
+            <Text style={styles.emitterName}>{emitterSettings.businessName}</Text>
+            {emitterSettings.businessAddress && (
+              <Text style={styles.text}>{emitterSettings.businessAddress}</Text>
+            )}
+            {emitterSettings.businessCity && (
+              <Text style={styles.text}>{emitterSettings.businessCity}</Text>
+            )}
+            {emitterSettings.businessPhone && (
+              <Text style={styles.text}>Tél : {emitterSettings.businessPhone}</Text>
+            )}
+            {emitterSettings.businessEmail && (
+              <Text style={styles.text}>Email : {emitterSettings.businessEmail}</Text>
+            )}
             <Text style={[styles.text, { marginTop: 4 }]}>
-              SIRET : {EMITTER.siret}
+              SIRET : {emitterSettings.businessSiret}
             </Text>
+            {emitterSettings.tvaApplicable && emitterSettings.tvaNumber && (
+              <Text style={styles.text}>
+                TVA : {emitterSettings.tvaNumber}
+              </Text>
+            )}
           </View>
           <View style={styles.clientSection}>
             <Text style={styles.sectionTitle}>Client</Text>
@@ -295,19 +314,36 @@ export function QuotePDF({ data, showWatermark = false }: QuotePDFProps) {
             <Text style={styles.totalLabel}>Total HT :</Text>
             <Text style={styles.totalValue}>{formatCurrency(totalHT)}</Text>
           </View>
-          <View style={styles.totalRow}>
-            <Text style={styles.totalLabel}>TVA (non applicable) :</Text>
-            <Text style={styles.totalValue}>0,00 €</Text>
-          </View>
-          <View style={styles.totalRowFinal}>
-            <Text style={styles.totalLabelFinal}>TOTAL :</Text>
-            <Text style={styles.totalValueFinal}>{formatCurrency(totalHT)}</Text>
-          </View>
+          {emitterSettings.tvaApplicable ? (
+            <>
+              <View style={styles.totalRow}>
+                <Text style={styles.totalLabel}>TVA ({emitterSettings.tvaRate}%) :</Text>
+                <Text style={styles.totalValue}>{formatCurrency(tvaAmount)}</Text>
+              </View>
+              <View style={styles.totalRowFinal}>
+                <Text style={styles.totalLabelFinal}>TOTAL TTC :</Text>
+                <Text style={styles.totalValueFinal}>{formatCurrency(totalTTC)}</Text>
+              </View>
+            </>
+          ) : (
+            <>
+              <View style={styles.totalRow}>
+                <Text style={styles.totalLabel}>TVA (non applicable) :</Text>
+                <Text style={styles.totalValue}>0,00 €</Text>
+              </View>
+              <View style={styles.totalRowFinal}>
+                <Text style={styles.totalLabelFinal}>TOTAL :</Text>
+                <Text style={styles.totalValueFinal}>{formatCurrency(totalHT)}</Text>
+              </View>
+            </>
+          )}
         </View>
 
         {/* TVA Note */}
         <Text style={styles.tvaNote}>
-          TVA non applicable, article 293 B du CGI.
+          {emitterSettings.tvaApplicable
+            ? `N° TVA intracommunautaire : ${emitterSettings.tvaNumber}`
+            : "TVA non applicable, article 293 B du CGI."}
         </Text>
 
         {/* Conditions + Signature side by side */}
@@ -325,11 +361,17 @@ export function QuotePDF({ data, showWatermark = false }: QuotePDFProps) {
             </Text>
             <View style={{ marginTop: 6, paddingTop: 6, borderTopWidth: 1, borderTopColor: "#ddd" }}>
               <Text style={{ fontSize: 7, color: "#666" }}>Coordonnées bancaires :</Text>
-              <Text style={styles.conditionsText}>
-                {BANK_DETAILS.holder} — {BANK_DETAILS.bank}
-              </Text>
-              <Text style={styles.conditionsText}>IBAN : {BANK_DETAILS.iban}</Text>
-              <Text style={styles.conditionsText}>BIC : {BANK_DETAILS.bic}</Text>
+              {(emitterSettings.bankHolder || emitterSettings.bankName) && (
+                <Text style={styles.conditionsText}>
+                  {emitterSettings.bankHolder}{emitterSettings.bankHolder && emitterSettings.bankName ? " — " : ""}{emitterSettings.bankName}
+                </Text>
+              )}
+              {emitterSettings.bankIban && (
+                <Text style={styles.conditionsText}>IBAN : {emitterSettings.bankIban}</Text>
+              )}
+              {emitterSettings.bankBic && (
+                <Text style={styles.conditionsText}>BIC : {emitterSettings.bankBic}</Text>
+              )}
             </View>
           </View>
 
@@ -362,7 +404,7 @@ export function QuotePDF({ data, showWatermark = false }: QuotePDFProps) {
 
         {/* Footer */}
         <Text style={styles.footer}>
-          {EMITTER.name} • SIRET {EMITTER.siret} • {EMITTER.email}
+          {emitterSettings.businessName} • SIRET {emitterSettings.businessSiret} • {emitterSettings.businessEmail}
         </Text>
       </Page>
     </Document>

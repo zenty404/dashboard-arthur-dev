@@ -12,6 +12,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { InvoiceData, InvoiceItem, DEFAULT_INVOICE } from "@/lib/invoice-defaults";
+import { EmitterSettings } from "@/lib/emitter-settings";
 import { Plus, Trash2, FileText } from "lucide-react";
 import dynamic from "next/dynamic";
 
@@ -58,9 +59,10 @@ function getInitialData(searchParams: URLSearchParams): InvoiceData {
 
 interface InvoiceFormProps {
   plan?: string;
+  emitterSettings: EmitterSettings;
 }
 
-export function InvoiceForm({ plan = "free" }: InvoiceFormProps) {
+export function InvoiceForm({ plan = "free", emitterSettings }: InvoiceFormProps) {
   const searchParams = useSearchParams();
   const [data, setData] = useState<InvoiceData>(() => getInitialData(searchParams));
 
@@ -307,16 +309,48 @@ export function InvoiceForm({ plan = "free" }: InvoiceFormProps) {
               </div>
             ))}
 
-            <div className="pt-4 border-t">
-              <div className="flex justify-between text-lg font-bold">
-                <span>Total HT :</span>
-                <span>
+            <div className="pt-4 border-t space-y-2">
+              <div className="flex justify-between">
+                <span className="text-muted-foreground">Total HT :</span>
+                <span className="font-medium">
                   {totalHT.toLocaleString("fr-FR", {
                     minimumFractionDigits: 2,
                   })}{" "}
                   €
                 </span>
               </div>
+              {emitterSettings.tvaApplicable ? (
+                <>
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">TVA ({emitterSettings.tvaRate}%) :</span>
+                    <span className="font-medium">
+                      {(Math.round(totalHT * emitterSettings.tvaRate / 100 * 100) / 100).toLocaleString("fr-FR", {
+                        minimumFractionDigits: 2,
+                      })}{" "}
+                      €
+                    </span>
+                  </div>
+                  <div className="flex justify-between text-lg font-bold pt-2 border-t">
+                    <span>Total TTC :</span>
+                    <span>
+                      {(totalHT + Math.round(totalHT * emitterSettings.tvaRate / 100 * 100) / 100).toLocaleString("fr-FR", {
+                        minimumFractionDigits: 2,
+                      })}{" "}
+                      €
+                    </span>
+                  </div>
+                </>
+              ) : (
+                <div className="flex justify-between text-lg font-bold pt-2 border-t">
+                  <span>NET À PAYER :</span>
+                  <span>
+                    {totalHT.toLocaleString("fr-FR", {
+                      minimumFractionDigits: 2,
+                    })}{" "}
+                    €
+                  </span>
+                </div>
+              )}
             </div>
           </CardContent>
         </Card>
@@ -332,7 +366,7 @@ export function InvoiceForm({ plan = "free" }: InvoiceFormProps) {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <InvoicePreview data={data} showWatermark={plan === "free"} />
+            <InvoicePreview data={data} showWatermark={plan === "free"} emitterSettings={emitterSettings} />
           </CardContent>
         </Card>
       </div>

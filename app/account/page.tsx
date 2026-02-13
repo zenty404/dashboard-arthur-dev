@@ -5,7 +5,8 @@ import { Button } from "@/components/ui/button";
 import { Logo } from "@/components/logo";
 import { LogoutButton } from "@/components/logout-button";
 import { PlanCard } from "@/components/account/plan-card";
-import { ArrowLeft, User } from "lucide-react";
+import { isEmitterConfigured } from "@/lib/emitter-settings";
+import { ArrowLeft, User, Settings, AlertCircle } from "lucide-react";
 import Link from "next/link";
 
 export const dynamic = "force-dynamic";
@@ -24,6 +25,7 @@ export default async function AccountPage() {
       plan: true,
       planExpiresAt: true,
       createdAt: true,
+      businessName: true,
     },
   });
 
@@ -73,6 +75,29 @@ export default async function AccountPage() {
               </div>
             </div>
           </div>
+
+          {/* Billing settings link */}
+          <Link href="/account/billing-settings" className="block">
+            <div className="rounded-lg border p-4 hover:border-primary/50 transition-colors">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <Settings className="h-5 w-5 text-primary" />
+                  <div>
+                    <p className="font-medium">Paramètres de facturation</p>
+                    <p className="text-sm text-muted-foreground">
+                      Informations émetteur, coordonnées bancaires et TVA
+                    </p>
+                  </div>
+                </div>
+                {!isEmitterConfigured(user) && (
+                  <span className="flex items-center gap-1 text-xs font-medium px-2 py-1 rounded-full bg-orange-500/10 text-orange-400 border border-orange-500/30">
+                    <AlertCircle className="h-3 w-3" />
+                    Non configuré
+                  </span>
+                )}
+              </div>
+            </div>
+          </Link>
 
           {/* Plan card */}
           <PlanCard

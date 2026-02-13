@@ -39,6 +39,19 @@ model User {
   stripeSubscriptionId String?
   planExpiresAt        DateTime?
   createdAt            DateTime        @default(now())
+  businessName         String?
+  businessAddress      String?
+  businessCity         String?
+  businessPhone        String?
+  businessEmail        String?
+  businessSiret        String?
+  bankHolder           String?
+  bankName             String?
+  bankIban             String?
+  bankBic              String?
+  tvaApplicable        Boolean         @default(false)
+  tvaRate              Float           @default(20.0)
+  tvaNumber            String?
   links                Link[]
   qrCodes              QrCode[]
   monitoredSites       MonitoredSite[]

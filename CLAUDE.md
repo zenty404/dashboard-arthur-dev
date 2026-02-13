@@ -37,6 +37,9 @@ Required environment variables in `.env`:
 - `TURSO_AUTH_TOKEN` - Turso auth token
 - `JWT_SECRET` - Secret for JWT signing (defaults to dev value if unset)
 - `CRON_SECRET` - Bearer token protecting the `/api/cron/uptime` endpoint (production only)
+- `STRIPE_SECRET_KEY` - Stripe API secret key (for subscription billing)
+- `STRIPE_PRICE_ID` - Stripe Price ID for the Premium plan
+- `STRIPE_WEBHOOK_SECRET` - Stripe webhook signing secret
 
 `npm install` auto-runs `prisma generate` via postinstall hook. The generated Prisma client (`lib/generated/prisma/`) is gitignored, so `npm install` or `npx prisma generate` must run after a fresh clone before the project will compile.
 
@@ -67,6 +70,10 @@ Multi-tool enterprise dashboard with authentication, built with Next.js 16 (App 
 - `app/tools/[tool-name]/` - Each tool has its own folder with `page.tsx` and optional `actions.ts` (Server Actions)
 - `app/[shortCode]/route.ts` - Public redirect handler for shortened links
 - `app/actions/auth.ts` - Auth Server Actions (login, logout, setup)
+- `app/admin/` - Admin panel (user list, user edit at `users/[userId]/`)
+- `app/account/` - User account page (password change, subscription management)
+- `app/register/` - Public user registration
+- `app/api/webhooks/stripe/route.ts` - Stripe webhook handler
 - `components/[tool-name]/` - Tool-specific components, `components/ui/` for Shadcn
 - `lib/` - Shared utilities (auth, prisma, tools config, invoice defaults)
 - `middleware.ts` - Auth middleware
@@ -75,14 +82,28 @@ Multi-tool enterprise dashboard with authentication, built with Next.js 16 (App 
 
 **Prisma + Turso/libSQL.** `lib/prisma.ts` creates a singleton client using the `@prisma/adapter-libsql` adapter. `TURSO_DATABASE_URL` is required at runtime (throws if missing).
 
-**Models**: Link (with ClickEvent for individual click tracking), QrCode, User, MonitoredSite (with UptimeCheck for uptime monitoring), Client. Schema is in `prisma/schema.prisma`.
+**Models**: User (with role/plan/Stripe fields), Link (with ClickEvent for individual click tracking), QrCode, MonitoredSite (with UptimeCheck for uptime monitoring), Client. All tool models have an optional `userId` FK for data isolation. Schema is in `prisma/schema.prisma`.
 
-### Authentication
+### Authentication & Multi-User System
 
 - Cookie-based JWT auth with `auth-token` cookie (HttpOnly, 7-day expiry, Secure in production)
-- `middleware.ts` protects all routes except: `/login`, `/setup`, `/api`, `/link-disabled`, and single-segment paths (short code redirects)
+- JWT payload contains `userId` and `role`; `lib/auth.ts` uses `jsonwebtoken`, while `middleware.ts` uses `jose` (Edge-compatible)
+- `middleware.ts` protects all routes except: `/login`, `/register`, `/setup`, `/api`, `/link-disabled`, and single-segment paths (short code redirects). `/admin` routes additionally check JWT role.
 - `/setup` creates the first admin user (only works when no users exist)
+- `/register` — public registration for new users (default role: `user`, default plan: `free`)
+- `/admin` — admin panel for user management (list users, edit roles/plans, delete users)
+- `/account` — user self-service page (change password, manage subscription)
 - Password hashing: bcryptjs with 12 salt rounds
+- **Roles**: `admin` (full access including admin panel) and `user` (standard access)
+- **Plans**: `free` and `premium` (managed via Stripe subscriptions)
+- Data isolation: server-side tools filter data by `userId` from the JWT
+
+### Stripe Subscriptions
+
+- `lib/stripe.ts` — singleton Stripe client, exports `getStripe()` and `STRIPE_PRICE_ID`
+- Checkout flow: creates a Stripe Checkout Session with `userId` in metadata
+- Webhook at `/api/webhooks/stripe` handles: `checkout.session.completed` (activate premium), `invoice.paid` (renew), `customer.subscription.deleted` (downgrade to free)
+- User model tracks: `plan`, `stripeCustomerId`, `stripeSubscriptionId`, `planExpiresAt`
 
 ### Server Actions Pattern
 

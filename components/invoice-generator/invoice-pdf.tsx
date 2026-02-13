@@ -7,7 +7,8 @@ import {
   View,
   StyleSheet,
 } from "@react-pdf/renderer";
-import { EMITTER, BANK_DETAILS, InvoiceData } from "@/lib/invoice-defaults";
+import { InvoiceData } from "@/lib/invoice-defaults";
+import { EmitterSettings } from "@/lib/emitter-settings";
 
 const styles = StyleSheet.create({
   page: {
@@ -185,13 +186,19 @@ const styles = StyleSheet.create({
 interface InvoicePDFProps {
   data: InvoiceData;
   showWatermark?: boolean;
+  emitterSettings: EmitterSettings;
 }
 
-export function InvoicePDF({ data, showWatermark = false }: InvoicePDFProps) {
+export function InvoicePDF({ data, showWatermark = false, emitterSettings }: InvoicePDFProps) {
   const totalHT = data.items.reduce(
     (sum, item) => sum + item.quantity * item.unitPrice,
     0
   );
+
+  const tvaAmount = emitterSettings.tvaApplicable
+    ? Math.round(totalHT * emitterSettings.tvaRate / 100 * 100) / 100
+    : 0;
+  const totalTTC = totalHT + tvaAmount;
 
   const formatCurrency = (amount: number) =>
     amount.toLocaleString("fr-FR", {
@@ -206,14 +213,27 @@ export function InvoicePDF({ data, showWatermark = false }: InvoicePDFProps) {
         <View style={styles.header}>
           <View style={styles.emitterSection}>
             <Text style={styles.sectionTitle}>Émetteur</Text>
-            <Text style={styles.emitterName}>{EMITTER.name}</Text>
-            <Text style={styles.text}>{EMITTER.address}</Text>
-            <Text style={styles.text}>{EMITTER.city}</Text>
-            <Text style={styles.text}>Tél : {EMITTER.phone}</Text>
-            <Text style={styles.text}>Email : {EMITTER.email}</Text>
+            <Text style={styles.emitterName}>{emitterSettings.businessName}</Text>
+            {emitterSettings.businessAddress && (
+              <Text style={styles.text}>{emitterSettings.businessAddress}</Text>
+            )}
+            {emitterSettings.businessCity && (
+              <Text style={styles.text}>{emitterSettings.businessCity}</Text>
+            )}
+            {emitterSettings.businessPhone && (
+              <Text style={styles.text}>Tél : {emitterSettings.businessPhone}</Text>
+            )}
+            {emitterSettings.businessEmail && (
+              <Text style={styles.text}>Email : {emitterSettings.businessEmail}</Text>
+            )}
             <Text style={[styles.text, { marginTop: 8 }]}>
-              SIRET : {EMITTER.siret}
+              SIRET : {emitterSettings.businessSiret}
             </Text>
+            {emitterSettings.tvaApplicable && emitterSettings.tvaNumber && (
+              <Text style={styles.text}>
+                TVA : {emitterSettings.tvaNumber}
+              </Text>
+            )}
           </View>
           <View style={styles.clientSection}>
             <Text style={styles.sectionTitle}>Client</Text>
@@ -278,19 +298,36 @@ export function InvoicePDF({ data, showWatermark = false }: InvoicePDFProps) {
             <Text style={styles.totalLabel}>Total HT :</Text>
             <Text style={styles.totalValue}>{formatCurrency(totalHT)}</Text>
           </View>
-          <View style={styles.totalRow}>
-            <Text style={styles.totalLabel}>TVA (non applicable) :</Text>
-            <Text style={styles.totalValue}>0,00 €</Text>
-          </View>
-          <View style={styles.totalRowFinal}>
-            <Text style={styles.totalLabelFinal}>NET À PAYER :</Text>
-            <Text style={styles.totalValueFinal}>{formatCurrency(totalHT)}</Text>
-          </View>
+          {emitterSettings.tvaApplicable ? (
+            <>
+              <View style={styles.totalRow}>
+                <Text style={styles.totalLabel}>TVA ({emitterSettings.tvaRate}%) :</Text>
+                <Text style={styles.totalValue}>{formatCurrency(tvaAmount)}</Text>
+              </View>
+              <View style={styles.totalRowFinal}>
+                <Text style={styles.totalLabelFinal}>TOTAL TTC :</Text>
+                <Text style={styles.totalValueFinal}>{formatCurrency(totalTTC)}</Text>
+              </View>
+            </>
+          ) : (
+            <>
+              <View style={styles.totalRow}>
+                <Text style={styles.totalLabel}>TVA (non applicable) :</Text>
+                <Text style={styles.totalValue}>0,00 €</Text>
+              </View>
+              <View style={styles.totalRowFinal}>
+                <Text style={styles.totalLabelFinal}>NET À PAYER :</Text>
+                <Text style={styles.totalValueFinal}>{formatCurrency(totalHT)}</Text>
+              </View>
+            </>
+          )}
         </View>
 
         {/* TVA Note */}
         <Text style={styles.tvaNote}>
-          TVA non applicable, article 293 B du CGI.
+          {emitterSettings.tvaApplicable
+            ? `N° TVA intracommunautaire : ${emitterSettings.tvaNumber}`
+            : "TVA non applicable, article 293 B du CGI."}
         </Text>
 
         {/* Payment Section */}
@@ -304,12 +341,20 @@ export function InvoicePDF({ data, showWatermark = false }: InvoicePDFProps) {
           </Text>
           <View style={styles.bankDetails}>
             <Text style={styles.bankLabel}>Coordonnées bancaires (RIB) :</Text>
-            <Text style={styles.paymentText}>
-              Titulaire : {BANK_DETAILS.holder}
-            </Text>
-            <Text style={styles.paymentText}>Banque : {BANK_DETAILS.bank}</Text>
-            <Text style={styles.paymentText}>IBAN : {BANK_DETAILS.iban}</Text>
-            <Text style={styles.paymentText}>BIC : {BANK_DETAILS.bic}</Text>
+            {emitterSettings.bankHolder && (
+              <Text style={styles.paymentText}>
+                Titulaire : {emitterSettings.bankHolder}
+              </Text>
+            )}
+            {emitterSettings.bankName && (
+              <Text style={styles.paymentText}>Banque : {emitterSettings.bankName}</Text>
+            )}
+            {emitterSettings.bankIban && (
+              <Text style={styles.paymentText}>IBAN : {emitterSettings.bankIban}</Text>
+            )}
+            {emitterSettings.bankBic && (
+              <Text style={styles.paymentText}>BIC : {emitterSettings.bankBic}</Text>
+            )}
             <Text style={[styles.paymentText, { marginTop: 8, fontStyle: "italic" }]}>
               Merci d&apos;indiquer le numéro &quot;Facture {data.invoiceNumber}&quot; en
               libellé du virement.
@@ -339,7 +384,7 @@ export function InvoicePDF({ data, showWatermark = false }: InvoicePDFProps) {
 
         {/* Footer */}
         <Text style={styles.footer}>
-          {EMITTER.name} • SIRET {EMITTER.siret} • {EMITTER.email}
+          {emitterSettings.businessName} • SIRET {emitterSettings.businessSiret} • {emitterSettings.businessEmail}
         </Text>
       </Page>
     </Document>

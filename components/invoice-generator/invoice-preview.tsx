@@ -3,24 +3,26 @@
 import { PDFViewer, PDFDownloadLink } from "@react-pdf/renderer";
 import { InvoicePDF } from "./invoice-pdf";
 import { InvoiceData } from "@/lib/invoice-defaults";
+import { EmitterSettings } from "@/lib/emitter-settings";
 import { Button } from "@/components/ui/button";
 import { Download } from "lucide-react";
 
 interface InvoicePreviewProps {
   data: InvoiceData;
   showWatermark?: boolean;
+  emitterSettings: EmitterSettings;
 }
 
-export function InvoicePreview({ data, showWatermark = false }: InvoicePreviewProps) {
+export function InvoicePreview({ data, showWatermark = false, emitterSettings }: InvoicePreviewProps) {
   return (
     <div className="space-y-4">
       <div className="border rounded-lg overflow-hidden bg-gray-100">
         <PDFViewer width="100%" height={600} showToolbar={false}>
-          <InvoicePDF data={data} showWatermark={showWatermark} />
+          <InvoicePDF data={data} showWatermark={showWatermark} emitterSettings={emitterSettings} />
         </PDFViewer>
       </div>
       <PDFDownloadLink
-        document={<InvoicePDF data={data} showWatermark={showWatermark} />}
+        document={<InvoicePDF data={data} showWatermark={showWatermark} emitterSettings={emitterSettings} />}
         fileName={`Facture-${data.invoiceNumber}.pdf`}
       >
         {({ loading }) => (

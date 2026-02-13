@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/card";
 import { InvoiceItem } from "@/lib/invoice-defaults";
 import { QuoteData, DEFAULT_QUOTE } from "@/lib/quote-defaults";
+import { EmitterSettings } from "@/lib/emitter-settings";
 import { Plus, Trash2, FileSignature, FileText } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
 import dynamic from "next/dynamic";
@@ -41,9 +42,10 @@ function getInitialData(searchParams: URLSearchParams): QuoteData {
 
 interface QuoteFormProps {
   plan?: string;
+  emitterSettings: EmitterSettings;
 }
 
-export function QuoteForm({ plan = "free" }: QuoteFormProps) {
+export function QuoteForm({ plan = "free", emitterSettings }: QuoteFormProps) {
   const searchParams = useSearchParams();
   const [data, setData] = useState<QuoteData>(() => getInitialData(searchParams));
   const router = useRouter();
@@ -307,16 +309,48 @@ export function QuoteForm({ plan = "free" }: QuoteFormProps) {
               </div>
             ))}
 
-            <div className="pt-4 border-t">
-              <div className="flex justify-between text-lg font-bold">
-                <span>Total HT :</span>
-                <span>
+            <div className="pt-4 border-t space-y-2">
+              <div className="flex justify-between">
+                <span className="text-muted-foreground">Total HT :</span>
+                <span className="font-medium">
                   {totalHT.toLocaleString("fr-FR", {
                     minimumFractionDigits: 2,
                   })}{" "}
                   €
                 </span>
               </div>
+              {emitterSettings.tvaApplicable ? (
+                <>
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">TVA ({emitterSettings.tvaRate}%) :</span>
+                    <span className="font-medium">
+                      {(Math.round(totalHT * emitterSettings.tvaRate / 100 * 100) / 100).toLocaleString("fr-FR", {
+                        minimumFractionDigits: 2,
+                      })}{" "}
+                      €
+                    </span>
+                  </div>
+                  <div className="flex justify-between text-lg font-bold pt-2 border-t">
+                    <span>Total TTC :</span>
+                    <span>
+                      {(totalHT + Math.round(totalHT * emitterSettings.tvaRate / 100 * 100) / 100).toLocaleString("fr-FR", {
+                        minimumFractionDigits: 2,
+                      })}{" "}
+                      €
+                    </span>
+                  </div>
+                </>
+              ) : (
+                <div className="flex justify-between text-lg font-bold pt-2 border-t">
+                  <span>Total :</span>
+                  <span>
+                    {totalHT.toLocaleString("fr-FR", {
+                      minimumFractionDigits: 2,
+                    })}{" "}
+                    €
+                  </span>
+                </div>
+              )}
             </div>
           </CardContent>
         </Card>
@@ -341,7 +375,7 @@ export function QuoteForm({ plan = "free" }: QuoteFormProps) {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <QuotePreview data={data} showWatermark={plan === "free"} />
+            <QuotePreview data={data} showWatermark={plan === "free"} emitterSettings={emitterSettings} />
           </CardContent>
         </Card>
       </div>

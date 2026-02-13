@@ -3,16 +3,29 @@ import { Button } from "@/components/ui/button";
 import { LogoutButton } from "@/components/logout-button";
 import { Logo } from "@/components/logo";
 import { InvoiceForm } from "@/components/invoice-generator/invoice-form";
-import { ArrowLeft, FileText } from "lucide-react";
+import { ArrowLeft, FileText, AlertCircle, Settings } from "lucide-react";
 import Link from "next/link";
 import { getCurrentUserId } from "@/lib/auth";
 import { getUserPlan } from "@/lib/plans";
+import { prisma } from "@/lib/prisma";
+import { buildEmitterSettings, EMITTER_SELECT } from "@/lib/emitter-settings";
 
 export const dynamic = "force-dynamic";
 
 export default async function InvoiceGeneratorPage() {
   const userId = await getCurrentUserId();
   const plan = userId ? await getUserPlan(userId) : "free";
+
+  let emitterSettings = null;
+  if (userId) {
+    const user = await prisma.user.findUnique({
+      where: { id: userId },
+      select: EMITTER_SELECT,
+    });
+    if (user) {
+      emitterSettings = buildEmitterSettings(user);
+    }
+  }
 
   return (
     <main className="min-h-screen bg-gradient-to-b from-background to-muted p-4">
@@ -39,9 +52,25 @@ export default async function InvoiceGeneratorPage() {
           <LogoutButton />
         </div>
 
-        <Suspense fallback={<div className="flex items-center justify-center h-64 text-muted-foreground">Chargement...</div>}>
-          <InvoiceForm plan={plan} />
-        </Suspense>
+        {!emitterSettings ? (
+          <div className="rounded-lg border border-orange-500/30 bg-orange-500/5 p-8 text-center space-y-4">
+            <AlertCircle className="h-12 w-12 text-orange-400 mx-auto" />
+            <h2 className="text-lg font-semibold">Paramètres de facturation requis</h2>
+            <p className="text-muted-foreground max-w-md mx-auto">
+              Vous devez configurer vos informations d&apos;émetteur (nom, SIRET, coordonnées bancaires) avant de pouvoir générer des factures.
+            </p>
+            <Button asChild>
+              <Link href="/account/billing-settings" className="inline-flex items-center gap-2">
+                <Settings className="h-4 w-4" />
+                Configurer mes paramètres
+              </Link>
+            </Button>
+          </div>
+        ) : (
+          <Suspense fallback={<div className="flex items-center justify-center h-64 text-muted-foreground">Chargement...</div>}>
+            <InvoiceForm plan={plan} emitterSettings={emitterSettings} />
+          </Suspense>
+        )}
       </div>
     </main>
   );
