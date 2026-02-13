@@ -12,19 +12,29 @@ import { ArrowLeft, Users } from "lucide-react";
 export const dynamic = "force-dynamic";
 
 async function getClients() {
-  const admin = await isAdmin();
-  const userId = await getCurrentUserId();
-  const clients = await prisma.client.findMany({
-    where: admin ? {} : { userId },
-    orderBy: { createdAt: "desc" },
-  });
-  return JSON.parse(JSON.stringify(clients));
+  try {
+    const admin = await isAdmin();
+    const userId = await getCurrentUserId();
+    const clients = await prisma.client.findMany({
+      where: admin ? {} : { userId },
+      orderBy: { createdAt: "desc" },
+    });
+    return JSON.parse(JSON.stringify(clients));
+  } catch (error) {
+    console.error("Erreur lors du chargement des clients:", error);
+    return [];
+  }
 }
 
 export default async function ClientManagerPage() {
   const clients = await getClients();
   const userId = await getCurrentUserId();
-  const quota = userId ? await checkQuota(userId, "clients") : null;
+  let quota = null;
+  try {
+    quota = userId ? await checkQuota(userId, "clients") : null;
+  } catch (error) {
+    console.error("Erreur lors de la vérification du quota:", error);
+  }
 
   return (
     <main className="min-h-screen bg-gradient-to-b from-background to-muted p-4">
