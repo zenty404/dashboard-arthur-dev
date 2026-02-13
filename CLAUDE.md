@@ -76,7 +76,9 @@ Multi-tool enterprise dashboard with authentication, built with Next.js 16 (App 
 - `app/api/webhooks/stripe/route.ts` - Stripe webhook handler
 - `components/[tool-name]/` - Tool-specific components, `components/ui/` for Shadcn
 - `lib/` - Shared utilities (auth, prisma, tools config, invoice defaults)
+- `lib/action-result.ts` - Shared `ActionResult` type for server actions
 - `middleware.ts` - Auth middleware
+- `app/error.tsx` - Global error boundary (Client Component, French UI)
 
 ### Database
 
@@ -109,11 +111,13 @@ Multi-tool enterprise dashboard with authentication, built with Next.js 16 (App 
 
 Tools with database writes use `actions.ts` files following a standard pattern:
 - `"use server"` directive at the top
-- `ActionResult` union type: `{ success: true } | { success: false; error: string }`
+- `ActionResult` type imported from `@/lib/action-result` (union: `{ success: true } | { success: false; error: string }`)
 - Input validation with early return on failure (French error messages)
 - `prisma.*` calls wrapped in try/catch
 - `revalidatePath("/tools/[tool-name]")` after every mutation to bust Next.js cache
 - `useTransition` on the client side for pending states
+
+**Critical**: NEVER use `export type { ... }` in `"use server"` files. Turbopack compiles it as a runtime reference, causing `ReferenceError` at runtime. Import types directly where needed instead.
 
 **Server-side tools** (with `actions.ts`): Link Tracker, QR Generator, Uptime Monitor, Client Manager.
 **Client-side tools** (no server actions, state-only): Invoice Generator, Quote Generator.

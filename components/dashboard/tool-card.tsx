@@ -41,7 +41,7 @@ export function ToolCard({ tool }: ToolCardProps) {
 
   return (
     <Link href={tool.href}>
-      <Card className={`transition-all ${colors.hover} hover:shadow-md cursor-pointer group`}>
+      <Card className={`h-full transition-all ${colors.hover} hover:shadow-md cursor-pointer group`}>
         <CardHeader>
           <div className={`w-12 h-12 rounded-lg ${colors.bg} flex items-center justify-center mb-3`}>
             <Icon className={`h-6 w-6 ${colors.icon}`} />
