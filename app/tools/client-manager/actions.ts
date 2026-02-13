@@ -6,8 +6,6 @@ import { checkQuota } from "@/lib/plans";
 import type { ActionResult } from "@/lib/action-result";
 import { revalidatePath } from "next/cache";
 
-export type { ActionResult };
-
 interface ClientData {
   name: string;
   email?: string;

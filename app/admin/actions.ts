@@ -5,8 +5,6 @@ import { hashPassword, isAdmin } from "@/lib/auth";
 import type { ActionResult } from "@/lib/action-result";
 import { revalidatePath } from "next/cache";
 
-export type { ActionResult };
-
 export async function createUser(
   username: string,
   password: string,

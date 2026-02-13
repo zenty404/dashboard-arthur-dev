@@ -12,42 +12,19 @@ import { ArrowLeft, Users } from "lucide-react";
 export const dynamic = "force-dynamic";
 
 async function getClients() {
-  try {
-    const admin = await isAdmin();
-    const userId = await getCurrentUserId();
-    const clients = await prisma.client.findMany({
-      where: admin ? {} : { userId },
-      orderBy: { createdAt: "desc" },
-    });
-    return JSON.parse(JSON.stringify(clients));
-  } catch (error) {
-    console.error("Erreur lors du chargement des clients:", error);
-    return [];
-  }
+  const admin = await isAdmin();
+  const userId = await getCurrentUserId();
+  const clients = await prisma.client.findMany({
+    where: admin ? {} : { userId },
+    orderBy: { createdAt: "desc" },
+  });
+  return JSON.parse(JSON.stringify(clients));
 }
 
 export default async function ClientManagerPage() {
-  let clients: ReturnType<typeof getClients> extends Promise<infer T> ? T : never = [];
-  let userId: string | null = null;
-  let quota: { allowed: boolean; current: number; limit: number } | null = null;
-
-  try {
-    clients = await getClients();
-  } catch (error) {
-    console.error("[CLIENT-MANAGER] getClients crash:", error);
-  }
-
-  try {
-    userId = await getCurrentUserId();
-  } catch (error) {
-    console.error("[CLIENT-MANAGER] getCurrentUserId crash:", error);
-  }
-
-  try {
-    quota = userId ? await checkQuota(userId, "clients") : null;
-  } catch (error) {
-    console.error("[CLIENT-MANAGER] checkQuota crash:", error);
-  }
+  const clients = await getClients();
+  const userId = await getCurrentUserId();
+  const quota = userId ? await checkQuota(userId, "clients") : null;
 
   return (
     <main className="min-h-screen bg-gradient-to-b from-background to-muted p-4">

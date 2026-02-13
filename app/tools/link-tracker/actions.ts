@@ -8,8 +8,6 @@ import type { ActionResult } from "@/lib/action-result";
 import { nanoid } from "nanoid";
 import { revalidatePath } from "next/cache";
 
-export type { ActionResult };
-
 export type CreateLinkResult =
   | { success: true; shortCode: string }
   | { success: false; error: string };

@@ -19,10 +19,11 @@ export default function GlobalError({
           Le chargement de la page a rencontré un problème. Veuillez
           rafraichir la page.
         </p>
-        <p className="text-xs text-muted-foreground/60 font-mono break-all">
-          {error?.message || "Erreur inconnue"}
-          {error?.digest && ` (${error.digest})`}
-        </p>
+        {error?.digest && (
+          <p className="text-xs text-muted-foreground/60 font-mono">
+            Code : {error.digest}
+          </p>
+        )}
         <div className="flex gap-2 justify-center">
           <Button onClick={reset}>
             <RotateCcw className="h-4 w-4 mr-2" />

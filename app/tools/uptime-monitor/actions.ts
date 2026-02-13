@@ -8,8 +8,6 @@ import { isValidUrl } from "@/lib/validators";
 import type { ActionResult } from "@/lib/action-result";
 import { revalidatePath } from "next/cache";
 
-export type { ActionResult };
-
 export type CheckActionResult =
   | { success: true; isUp: boolean; statusCode: number | null; responseTime: number | null }
   | { success: false; error: string };

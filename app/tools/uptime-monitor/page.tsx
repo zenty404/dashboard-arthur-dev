@@ -14,34 +14,24 @@ import { BarChart3, ArrowLeft, Activity } from "lucide-react";
 export const dynamic = "force-dynamic";
 
 async function getSites() {
-  try {
-    const admin = await isAdmin();
-    const userId = await getCurrentUserId();
-    return prisma.monitoredSite.findMany({
-      where: admin ? {} : { userId },
-      orderBy: { createdAt: "desc" },
-      include: {
-        uptimeChecks: {
-          orderBy: { checkedAt: "desc" },
-          take: 1,
-        },
+  const admin = await isAdmin();
+  const userId = await getCurrentUserId();
+  return prisma.monitoredSite.findMany({
+    where: admin ? {} : { userId },
+    orderBy: { createdAt: "desc" },
+    include: {
+      uptimeChecks: {
+        orderBy: { checkedAt: "desc" },
+        take: 1,
       },
-    });
-  } catch (error) {
-    console.error("Erreur lors du chargement des sites:", error);
-    return [];
-  }
+    },
+  });
 }
 
 export default async function UptimeMonitorPage() {
   const sites = await getSites();
   const userId = await getCurrentUserId();
-  let quota = null;
-  try {
-    quota = userId ? await checkQuota(userId, "sites") : null;
-  } catch (error) {
-    console.error("Erreur lors de la vérification du quota:", error);
-  }
+  const quota = userId ? await checkQuota(userId, "sites") : null;
 
   return (
     <main className="min-h-screen bg-gradient-to-b from-background to-muted p-4">
