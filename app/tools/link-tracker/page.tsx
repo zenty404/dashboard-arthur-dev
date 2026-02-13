@@ -15,18 +15,17 @@ export default async function LinkTrackerPage() {
   const quota = userId ? await checkQuota(userId, "links") : null;
 
   return (
-    <main className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-b from-background to-muted p-4">
-      <div className="absolute top-4 left-4">
-        <Button variant="ghost" asChild>
+    <main className="min-h-screen flex flex-col bg-gradient-to-b from-background to-muted p-4">
+      <div className="flex items-center justify-between flex-wrap gap-4 max-w-4xl mx-auto w-full pt-4">
+        <Button variant="ghost" size="sm" asChild>
           <Link href="/" className="flex items-center gap-2">
             <ArrowLeft className="h-4 w-4" />
             Dashboard
           </Link>
         </Button>
-      </div>
-      <div className="absolute top-4 right-4">
         <LogoutButton />
       </div>
+      <div className="flex-1 flex flex-col items-center justify-center">
       <div className="mb-8 text-center">
         <Logo size="lg" className="mb-4" />
         <h1 className="text-2xl font-semibold tracking-tight text-foreground">
@@ -46,6 +45,7 @@ export default async function LinkTrackerPage() {
             Voir les statistiques
           </Link>
         </Button>
+      </div>
       </div>
     </main>
   );

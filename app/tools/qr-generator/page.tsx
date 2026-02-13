@@ -17,8 +17,8 @@ export default async function QrGeneratorPage() {
   return (
     <main className="min-h-screen bg-gradient-to-b from-background to-muted p-4">
       <div className="max-w-4xl mx-auto py-8">
-        <div className="flex items-center justify-between mb-8">
-          <div>
+        <div className="flex items-center justify-between flex-wrap gap-4 mb-8">
+          <div className="min-w-0">
             <div className="flex items-center gap-4 mb-2">
               <Button variant="ghost" size="sm" asChild>
                 <Link href="/" className="flex items-center gap-2">
@@ -36,10 +36,10 @@ export default async function QrGeneratorPage() {
             </p>
           </div>
           <div className="flex items-center gap-2">
-            <Button variant="outline" asChild>
+            <Button variant="outline" size="sm" asChild>
               <Link href="/tools/qr-generator/history">
-                <History className="h-4 w-4 mr-2" />
-                Historique
+                <History className="h-4 w-4 sm:mr-2" />
+                <span className="hidden sm:inline">Historique</span>
               </Link>
             </Button>
             <LogoutButton />

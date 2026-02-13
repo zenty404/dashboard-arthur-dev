@@ -141,7 +141,7 @@ QR code creation tool with scan tracking. Stores QR metadata in DB (content, lab
 
 ### Invoice Generator
 
-Fully client-side tool — no `actions.ts` or server actions. PDF is rendered in the browser using `@react-pdf/renderer`. Emitter business info (name, address, SIRET, bank details) is hardcoded in `lib/invoice-defaults.ts`. Update this file to change invoice sender details. Supports pre-filling via `?data=<base64-json>` URL param (used by the Quote Generator's "Convertir en facture" flow).
+Fully client-side tool — no `actions.ts` or server actions. PDF is rendered in the browser using `@react-pdf/renderer`. Emitter business info (name, address, SIRET, bank details, VAT settings) is stored per-user in the database and loaded via `lib/emitter-settings.ts` (`buildEmitterSettings`, `EMITTER_SELECT`). Fallback defaults are in `lib/invoice-defaults.ts`. Supports pre-filling via `?data=<base64-json>` URL param (used by the Quote Generator's "Convertir en facture" flow). VAT is configurable per-user (`tvaApplicable`, `tvaRate`, `tvaNumber` fields on the User model).
 
 ### Quote Generator
 

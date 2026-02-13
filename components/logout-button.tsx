@@ -8,8 +8,8 @@ export function LogoutButton() {
   return (
     <form action={logout}>
       <Button variant="ghost" size="sm" type="submit">
-        <LogOut className="h-4 w-4 mr-2" />
-        Déconnexion
+        <LogOut className="h-4 w-4 sm:mr-2" />
+        <span className="hidden sm:inline">Déconnexion</span>
       </Button>
     </form>
   );

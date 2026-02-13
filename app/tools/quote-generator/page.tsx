@@ -30,8 +30,8 @@ export default async function QuoteGeneratorPage() {
   return (
     <main className="min-h-screen bg-gradient-to-b from-background to-muted p-4">
       <div className="max-w-6xl mx-auto py-8">
-        <div className="flex items-center justify-between mb-8">
-          <div>
+        <div className="flex items-center justify-between flex-wrap gap-4 mb-8">
+          <div className="min-w-0">
             <div className="flex items-center gap-4 mb-2">
               <Button variant="ghost" size="sm" asChild>
                 <Link href="/" className="flex items-center gap-2">

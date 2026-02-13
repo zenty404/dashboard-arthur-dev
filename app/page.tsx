@@ -31,8 +31,8 @@ export default async function DashboardPage() {
   return (
     <main className="min-h-screen bg-gradient-to-b from-background to-muted">
       <div className="max-w-4xl mx-auto py-8 px-4">
-        <div className="flex items-center justify-between mb-8">
-          <div>
+        <div className="flex items-center justify-between flex-wrap gap-4 mb-8">
+          <div className="min-w-0">
             <Logo size="lg" className="mb-2" />
             <h1 className="text-2xl font-bold tracking-tight text-foreground">
               Tableau de bord
