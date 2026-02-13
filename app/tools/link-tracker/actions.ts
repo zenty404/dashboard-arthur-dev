@@ -3,25 +3,16 @@
 import { prisma } from "@/lib/prisma";
 import { getCurrentUserId } from "@/lib/auth";
 import { checkQuota } from "@/lib/plans";
+import { isValidUrl } from "@/lib/validators";
+import type { ActionResult } from "@/lib/action-result";
 import { nanoid } from "nanoid";
 import { revalidatePath } from "next/cache";
+
+export type { ActionResult };
 
 export type CreateLinkResult =
   | { success: true; shortCode: string }
   | { success: false; error: string };
-
-export type ActionResult =
-  | { success: true }
-  | { success: false; error: string };
-
-function isValidUrl(url: string): boolean {
-  try {
-    const parsed = new URL(url);
-    return parsed.protocol === "http:" || parsed.protocol === "https:";
-  } catch {
-    return false;
-  }
-}
 
 export async function createShortLink(
   originalUrl: string

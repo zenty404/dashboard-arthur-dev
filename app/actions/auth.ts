@@ -8,11 +8,10 @@ import {
   setAuthCookie,
   removeAuthCookie,
 } from "@/lib/auth";
+import type { ActionResult } from "@/lib/action-result";
 import { redirect } from "next/navigation";
 
-export type AuthResult =
-  | { success: true }
-  | { success: false; error: string };
+export type AuthResult = ActionResult;
 
 export async function login(
   username: string,

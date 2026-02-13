@@ -3,11 +3,10 @@
 import { prisma } from "@/lib/prisma";
 import { getCurrentUserId } from "@/lib/auth";
 import { checkQuota } from "@/lib/plans";
+import type { ActionResult } from "@/lib/action-result";
 import { revalidatePath } from "next/cache";
 
-export type ActionResult =
-  | { success: true }
-  | { success: false; error: string };
+export type { ActionResult };
 
 interface ClientData {
   name: string;

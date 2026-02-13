@@ -2,9 +2,8 @@
 
 import { getCurrentUserId } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import type { ActionResult } from "@/lib/action-result";
 import { revalidatePath } from "next/cache";
-
-type ActionResult = { success: true } | { success: false; error: string };
 
 interface SaveEmitterInput {
   businessName: string;

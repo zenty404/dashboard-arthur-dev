@@ -2,11 +2,10 @@
 
 import { prisma } from "@/lib/prisma";
 import { hashPassword, isAdmin } from "@/lib/auth";
+import type { ActionResult } from "@/lib/action-result";
 import { revalidatePath } from "next/cache";
 
-export type ActionResult =
-  | { success: true }
-  | { success: false; error: string };
+export type { ActionResult };
 
 export async function createUser(
   username: string,
