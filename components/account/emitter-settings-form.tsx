@@ -69,7 +69,7 @@ export function EmitterSettingsForm({ initialSettings }: EmitterSettingsFormProp
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="space-y-2">
               <label className="text-sm font-medium">
                 Nom / Raison sociale <span className="text-destructive">*</span>
@@ -91,7 +91,7 @@ export function EmitterSettingsForm({ initialSettings }: EmitterSettingsFormProp
               />
             </div>
           </div>
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="space-y-2">
               <label className="text-sm font-medium">Adresse</label>
               <Input
@@ -109,7 +109,7 @@ export function EmitterSettingsForm({ initialSettings }: EmitterSettingsFormProp
               />
             </div>
           </div>
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="space-y-2">
               <label className="text-sm font-medium">Téléphone</label>
               <Input
@@ -139,7 +139,7 @@ export function EmitterSettingsForm({ initialSettings }: EmitterSettingsFormProp
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="space-y-2">
               <label className="text-sm font-medium">Titulaire du compte</label>
               <Input
@@ -157,7 +157,7 @@ export function EmitterSettingsForm({ initialSettings }: EmitterSettingsFormProp
               />
             </div>
           </div>
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="space-y-2">
               <label className="text-sm font-medium">IBAN</label>
               <Input
@@ -187,7 +187,7 @@ export function EmitterSettingsForm({ initialSettings }: EmitterSettingsFormProp
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
-          <div className="flex gap-2">
+          <div className="flex flex-col sm:flex-row gap-2">
             <Button
               type="button"
               variant={!tvaApplicable ? "default" : "outline"}
@@ -210,7 +210,7 @@ export function EmitterSettingsForm({ initialSettings }: EmitterSettingsFormProp
             <div className="space-y-4 pt-2">
               <div className="space-y-2">
                 <label className="text-sm font-medium">Taux de TVA (%)</label>
-                <div className="flex gap-2 items-center">
+                <div className="flex flex-wrap gap-2 items-center">
                   <Input
                     type="number"
                     min={0}
@@ -220,7 +220,7 @@ export function EmitterSettingsForm({ initialSettings }: EmitterSettingsFormProp
                     onChange={(e) => setTvaRate(parseFloat(e.target.value) || 0)}
                     className="w-24"
                   />
-                  <div className="flex gap-1">
+                  <div className="flex flex-wrap gap-1">
                     {TVA_PRESETS.map((preset) => (
                       <Button
                         key={preset}
