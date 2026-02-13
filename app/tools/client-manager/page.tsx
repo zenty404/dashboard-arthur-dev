@@ -27,13 +27,26 @@ async function getClients() {
 }
 
 export default async function ClientManagerPage() {
-  const clients = await getClients();
-  const userId = await getCurrentUserId();
-  let quota = null;
+  let clients: ReturnType<typeof getClients> extends Promise<infer T> ? T : never = [];
+  let userId: string | null = null;
+  let quota: { allowed: boolean; current: number; limit: number } | null = null;
+
+  try {
+    clients = await getClients();
+  } catch (error) {
+    console.error("[CLIENT-MANAGER] getClients crash:", error);
+  }
+
+  try {
+    userId = await getCurrentUserId();
+  } catch (error) {
+    console.error("[CLIENT-MANAGER] getCurrentUserId crash:", error);
+  }
+
   try {
     quota = userId ? await checkQuota(userId, "clients") : null;
   } catch (error) {
-    console.error("Erreur lors de la vérification du quota:", error);
+    console.error("[CLIENT-MANAGER] checkQuota crash:", error);
   }
 
   return (
