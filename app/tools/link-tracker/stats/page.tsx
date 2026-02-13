@@ -21,6 +21,7 @@ import { Button } from "@/components/ui/button";
 import { LogoutButton } from "@/components/logout-button";
 import { Logo } from "@/components/logo";
 import { LinkActions } from "@/components/link-tracker/link-actions";
+import { CopyShortCode } from "@/components/link-tracker/copy-short-code";
 
 export const dynamic = "force-dynamic";
 
@@ -123,15 +124,8 @@ export default async function StatsPage() {
                 <TableBody>
                   {links.map((link) => (
                     <TableRow key={link.id}>
-                      <TableCell className="font-mono font-medium">
-                        <a
-                          href={`/${link.shortCode}`}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="hover:underline text-primary"
-                        >
-                          /{link.shortCode}
-                        </a>
+                      <TableCell>
+                        <CopyShortCode shortCode={link.shortCode} />
                       </TableCell>
                       <TableCell className="hidden md:table-cell max-w-xs truncate">
                         <a
