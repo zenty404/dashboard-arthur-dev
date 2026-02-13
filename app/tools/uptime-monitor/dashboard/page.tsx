@@ -1,5 +1,5 @@
 import { prisma } from "@/lib/prisma";
-import { getCurrentUserId, isAdmin } from "@/lib/auth";
+import { getCurrentUserId } from "@/lib/auth";
 import {
   Card,
   CardContent,
@@ -33,14 +33,12 @@ import { Logo } from "@/components/logo";
 export const dynamic = "force-dynamic";
 
 async function getStats() {
-  const admin = await isAdmin();
   const userId = await getCurrentUserId();
-  const siteWhere = admin ? {} : { userId };
 
-  const sites = await prisma.monitoredSite.findMany({ where: siteWhere });
+  const sites = await prisma.monitoredSite.findMany({ where: { userId } });
   const siteIds = sites.map((s) => s.id);
 
-  const checkWhere = admin ? {} : { siteId: { in: siteIds } };
+  const checkWhere = { siteId: { in: siteIds } };
 
   const checks = await prisma.uptimeCheck.findMany({
     where: checkWhere,

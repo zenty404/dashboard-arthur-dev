@@ -92,8 +92,9 @@ export async function toggleSiteActive(id: string): Promise<ActionResult> {
 
 export async function checkAllSites(): Promise<{ success: true; count: number } | { success: false; error: string }> {
   try {
+    const userId = await getCurrentUserId();
     const sites = await prisma.monitoredSite.findMany({
-      where: { isActive: true },
+      where: { isActive: true, userId },
       select: { id: true, url: true },
     });
 

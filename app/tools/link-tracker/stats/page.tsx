@@ -1,5 +1,5 @@
 import { prisma } from "@/lib/prisma";
-import { getCurrentUserId, isAdmin } from "@/lib/auth";
+import { getCurrentUserId } from "@/lib/auth";
 import {
   Card,
   CardContent,
@@ -25,10 +25,9 @@ import { LinkActions } from "@/components/link-tracker/link-actions";
 export const dynamic = "force-dynamic";
 
 async function getLinks() {
-  const admin = await isAdmin();
   const userId = await getCurrentUserId();
   return prisma.link.findMany({
-    where: admin ? {} : { userId },
+    where: { userId },
     orderBy: { createdAt: "desc" },
   });
 }

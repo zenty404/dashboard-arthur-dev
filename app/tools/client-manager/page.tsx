@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { prisma } from "@/lib/prisma";
-import { getCurrentUserId, isAdmin } from "@/lib/auth";
+import { getCurrentUserId } from "@/lib/auth";
 import { checkQuota } from "@/lib/plans";
 import { LogoutButton } from "@/components/logout-button";
 import { Button } from "@/components/ui/button";
@@ -12,10 +12,9 @@ import { ArrowLeft, Users } from "lucide-react";
 export const dynamic = "force-dynamic";
 
 async function getClients() {
-  const admin = await isAdmin();
   const userId = await getCurrentUserId();
   const clients = await prisma.client.findMany({
-    where: admin ? {} : { userId },
+    where: { userId },
     orderBy: { createdAt: "desc" },
   });
   return JSON.parse(JSON.stringify(clients));
